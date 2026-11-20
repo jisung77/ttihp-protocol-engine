@@ -22,6 +22,10 @@ python -m cocotb_tools.check_results protocols-full.xml
 
 [추론] 공식 GLS에는 같은 커밋에서 하드닝한 IHP `final/nl/*.nl.v`의 실제 프로젝트 넷리스트와 해당 PDK 셀 모델이 필요하다. 로컬 실행 시 넷리스트를 `test/gate_level_netlist.v`에 복사하고 올바른 `PDK_ROOT`를 설정한 뒤 `GATES=yes make -B COCOTB_RESULTS_FILE=gls.xml`로 실행한다. 공식 Actions의 GDS, precheck, gl_test는 개별 상태로 확인한다. [공식 GLS 액션](https://github.com/TinyTapeout/tt-gds-action/blob/ttihp27a/gl_test/action.yml)
 
+## RP2350 로더와 HDL 핀 시험
+
+기본 회귀의 `test_board_host`는 보드에 배포할 `Loader`를 그대로 호출한다. 보드 객체의 GPIO와 MicroPython 시간 함수만 시뮬레이터에 연결한다. 1 MHz와 100 kHz에서 적재·FIFO 재시도·중단 프레임 복구를 실행하고, 마지막 RUN 니블의 ACK 에지를 K로 삼아 K부터 K+8까지 출력과 OE를 명세 §7 표에 대조한다. 실제 USB 연결과 GPIO 전기 특성은 별도 보드 시험 대상이다. [핀 시험](test_board_host.py) · [명세 §7](../spec/spec.md#s7)
+
 ## 사람이 직접 확인할 지점
 
 - XML에 기대한 테스트가 실제로 실행됐고 실패·오류가 없는지 확인한다. 외부 핀만 보존되는 GLS에는 RTL 내부 신호 차등 시험을 적용하지 않는다.

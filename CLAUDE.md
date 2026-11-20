@@ -1,6 +1,6 @@
 # 프로그래머블 프로토콜 엔진 작업 규칙
 
-[추론] Claude Code가 계획과 작업 분담을 조정하고 Codex가 근거를 교차 검증한다. D:\TinyTapeout\protocol-emulator에서 작업하고 실행 증거는 D:\TinyTapeout\evidence에 둔다. 사용자에게는 한국어로 보고한다.
+[추론] 프로젝트 기본 Claude Code 에이전트 `asic-lead`가 다음 작업을 정하고 구현과 독립 검토를 위임한다. Codex가 별도 사본에서 실행한 결과와 반례를 돌려주면 Claude가 채택·수정·보류를 판정한다. D:\TinyTapeout\protocol-emulator에서 작업하고 실행 증거는 D:\TinyTapeout\evidence에 둔다. 사용자에게는 한국어로 보고한다.
 
 ## 한 세션의 역할과 자료
 
