@@ -1,0 +1,159 @@
+{
+  "additional_pc_bounds": {
+    "abstract_storage": "TIMEOUT_240s",
+    "exact_sram": "TIMEOUT_240s"
+  },
+  "clock_ns": 20,
+  "coverage": {
+    "control.branch": {
+      "observed": 7,
+      "reachable": 7
+    },
+    "engine.opcode": {
+      "observed": 16,
+      "reachable": 16
+    },
+    "engine.reset_state": {
+      "observed": 1,
+      "reachable": 1
+    },
+    "fifo.rx_count": {
+      "observed": 5,
+      "reachable": 5
+    },
+    "fifo.tx_count": {
+      "observed": 5,
+      "reachable": 5
+    },
+    "protocol.spi_mode": {
+      "observed": 4,
+      "reachable": 4
+    }
+  },
+  "formal": {
+    "engine_exact_safety": {
+      "outcome": "PASS",
+      "verdict_sha256": "6fb8ac4faa841c80d2f08c91db4b582741f64640158c2afa23870e86d9c1dc8b"
+    },
+    "fifo_bit0": {
+      "outcome": "PASS",
+      "verdict_sha256": "f4f5a5c0023bfe5430a5109027c0f32cf453a2318dde1afd3ed4ac3269ce2bae"
+    },
+    "fifo_bit1": {
+      "outcome": "PASS",
+      "verdict_sha256": "f4f5a5c0023bfe5430a5109027c0f32cf453a2318dde1afd3ed4ac3269ce2bae"
+    },
+    "fifo_bit2": {
+      "outcome": "PASS",
+      "verdict_sha256": "2b2cf8e60d605fc49bbcf85397ff82c99f2c33206a630319c636bb1ea5e9e5ea"
+    },
+    "fifo_bit3": {
+      "outcome": "PASS",
+      "verdict_sha256": "2b2cf8e60d605fc49bbcf85397ff82c99f2c33206a630319c636bb1ea5e9e5ea"
+    },
+    "fifo_bit4": {
+      "outcome": "PASS",
+      "verdict_sha256": "d9dabc857bc9782e16fe3bd1a208c0fd8672c4663b57998c38f1ecaa7ffd4b24"
+    },
+    "fifo_bit5": {
+      "outcome": "PASS",
+      "verdict_sha256": "d9dabc857bc9782e16fe3bd1a208c0fd8672c4663b57998c38f1ecaa7ffd4b24"
+    },
+    "fifo_bit6": {
+      "outcome": "PASS",
+      "verdict_sha256": "d9dabc857bc9782e16fe3bd1a208c0fd8672c4663b57998c38f1ecaa7ffd4b24"
+    },
+    "fifo_bit7": {
+      "outcome": "PASS",
+      "verdict_sha256": "08b40f50c1cafac4ad3e6f001c68c6d1266b10ed7d4245f7d2309bb2e3b03cc5"
+    },
+    "fifo_cover": {
+      "outcome": "PASS",
+      "verdict_sha256": "6c1822c4858079bf0c59a4d9014ebbad0066150fdc47f64b0fc08928fbd09fa0"
+    },
+    "opcode": {
+      "outcome": "PASS",
+      "verdict_sha256": "33ea6d35948feffee7f9480b30491094fd24e83cf8eee04ebee615e3a25d9605"
+    }
+  },
+  "mapped_netlist_sha256": "487e3297e81d4dc17fa7e2c4851dda44852f512845f019cf6b9d7dfe6a0ceb10",
+  "prelayout": {
+    "external_pin_regression": {
+      "junit_sha256": "8689192b6b52b3b69f5507b3796f01048770c4c2de6a87ffba305ec22808a0f4",
+      "passed": 11,
+      "skipped": [
+        "seeded_cycle_differential",
+        "branch_fifo_reset_coverage",
+        "accepted_stop_preempts_same_edge_retire"
+      ]
+    },
+    "flip_flops": 292,
+    "library": "CMOS5L typical 1.20 V 25 C",
+    "macro_area_um2": 28127.104,
+    "mapped_area_um2": 54890.7514,
+    "sram_macros": 1,
+    "standard_cell_area_um2": 26763.6474,
+    "standard_cells": 1414,
+    "yosys_log_sha256": "515e6353ca24a53db715e5330843b945ae2cf5d6960c73d134e1e9e41e7d06bb"
+  },
+  "python": {
+    "junit_sha256": "c5203b6dba13b94a2283bff4fb6eb93d10fc786679a1121b453f2c03c8599393",
+    "passed": 136,
+    "skipped": []
+  },
+  "rtl": {
+    "junit_sha256": "ec0fd86bbc0f24671796364a01c3424cf102c0bedea975ac2a3cf69d97975d5b",
+    "passed": 14,
+    "skipped": []
+  },
+  "rtl_simulation_seed": 18455,
+  "source_commit": "37963ca1189e088ff444d8dcf439d33fd5b70523",
+  "uart_rx": {
+    "individual_rate_junit": {
+      "112896": {
+        "junit_sha256": "68aa1f32cbdf3b687762383c9fe9054fb83a4c23333c66006426a70be8c64f04",
+        "passed": 1,
+        "skipped": [
+          "uart_tx_8n1_all_bytes",
+          "uart_rx_phase_and_rate/rate=115200",
+          "uart_rx_phase_and_rate/rate=117504",
+          "spi_master_full_duplex/mode=0",
+          "spi_master_full_duplex/mode=1",
+          "spi_master_full_duplex/mode=2",
+          "spi_master_full_duplex/mode=3"
+        ]
+      },
+      "115200": {
+        "junit_sha256": "9793e75602f835d9ee8d4925d7c3701af240557c2677845332a3f5b57b3542a1",
+        "passed": 1,
+        "skipped": [
+          "uart_tx_8n1_all_bytes",
+          "uart_rx_phase_and_rate/rate=112896",
+          "uart_rx_phase_and_rate/rate=117504",
+          "spi_master_full_duplex/mode=0",
+          "spi_master_full_duplex/mode=1",
+          "spi_master_full_duplex/mode=2",
+          "spi_master_full_duplex/mode=3"
+        ]
+      },
+      "117504": {
+        "junit_sha256": "6457aaa06ee6e0f2fb7f038c005c3f64622f66983324a85aaa5d1bfc39f5cb3a",
+        "passed": 1,
+        "skipped": [
+          "uart_tx_8n1_all_bytes",
+          "uart_rx_phase_and_rate/rate=112896",
+          "uart_rx_phase_and_rate/rate=115200",
+          "spi_master_full_duplex/mode=0",
+          "spi_master_full_duplex/mode=1",
+          "spi_master_full_duplex/mode=2",
+          "spi_master_full_duplex/mode=3"
+        ]
+      }
+    },
+    "phase_x_rate_x_byte_cases": 3072,
+    "source_commit": "ff950107fddcf1a9d279e827f36f0543dd825179",
+    "source_files": 18
+  },
+  "vcd_format": "FST",
+  "waveform_sha256": "f0431ef0c27ad492510a3f7e1c319e4d06bae2d04b8b2f9b0ba7d1a9b90b1c2b"
+}

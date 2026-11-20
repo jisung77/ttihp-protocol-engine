@@ -4,7 +4,7 @@
 
 ## 첫 프로그램
 
-호스트에서 다음 명령을 실행하면 UART 송신 예제가 로더에 넣을 수 있는 리틀엔디언 바이너리가 된다. 준비된 프로그램은 FIFO에서 바이트를 받아 핀 0에 8N1 프레임을 출력한다. [어셈블리와 예제 설명](examples/README.md)
+호스트에서 다음 명령을 실행하면 UART 송신 예제가 로더에 넣을 수 있는 리틀엔디언 바이너리가 된다. 준비된 프로그램은 FIFO에서 바이트를 받아 핀 0에 8N1 프레임을 출력한다. [어셈블리와 예제 설명](examples/README.md) · [RP2350 적재 방법](host/README.md)
 
 ```sh
 python -m model.assembler examples/uart_tx.asm uart_tx.bin
@@ -12,7 +12,7 @@ python -m model.assembler examples/uart_tx.asm uart_tx.bin
 
 ## 검증
 
-[실행 확인] 검증용 Python ISS와 회로는 같은 명세로 독립 작성했다. cocotb는 로더로 프로그램을 적재하고 외부 핀과 클록별 실행 상태를 검사한다. 별도의 UART 수신기와 SPI 타깃이 실제 RTL 핀 전이를 해석한다. [검증 실행법](test/README.md) · [검증 계획](docs/verification_plan.md)
+[실행 확인] 검증용 Python ISS와 회로는 같은 명세로 독립 작성했다. cocotb는 로더로 프로그램을 적재하고 외부 핀과 클록별 실행 상태를 검사한다. 별도의 UART 수신기와 SPI 타깃이 실제 RTL 핀 전이를 해석한다. [검증 보고서](docs/verification_report.md) · [검증 실행법](test/README.md) · [검증 계획](docs/verification_plan.md)
 
 [추론] 클록 제약은 20 ns이며 예제 시각은 50 MHz 가정이다. 제작 공정의 속도와 14일차 면적 기준은 배선 후 결과로 판정한다. [Tiny Tapeout 공식 플로](https://www.tinytapeout.com/guides/local-hardening/)
 
