@@ -1,0 +1,32 @@
+[tasks]
+safety default
+bounds
+
+[options]
+mode prove
+aigsmt z3
+bounds: timeout 240
+
+[engines]
+abc pdr
+
+[script]
+read_verilog -sv -formal -DPE_SIM_SRAM pe_fifo.v pe_core.v pe_host.v pe_sram.v project.v
+expose tt_um_jisung_protocol_engine/w:pc tt_um_jisung_protocol_engine/w:retire tt_um_jisung_protocol_engine/w:tx_count tt_um_jisung_protocol_engine/w:rx_count
+safety: read_verilog -sv -formal pe_engine_formal.sv
+bounds: read_verilog -sv -formal -DENGINE_LENGTH pe_engine_formal.sv
+hierarchy -check -top pe_engine_formal
+proc
+# Treat instruction-memory output as a fresh arbitrary word on every step.
+# Only the SRAM instance is abstracted; loader/control and FIFO RTL stay exact.
+select -assert-count 1 t:pe_sram
+safety: cutpoint t:pe_sram
+prep -top pe_engine_formal
+
+[files]
+../src/pe_fifo.v
+../src/pe_core.v
+../src/pe_host.v
+../src/pe_sram.v
+../src/project.v
+pe_engine_formal.sv

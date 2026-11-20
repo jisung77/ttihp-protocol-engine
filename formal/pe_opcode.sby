@@ -1,0 +1,27 @@
+[options]
+mode prove
+aigsmt z3
+
+[engines]
+abc pdr
+
+[script]
+read_verilog -sv -formal -DPE_SIM_SRAM pe_fifo.v pe_core.v pe_host.v pe_sram.v project.v
+expose tt_um_jisung_protocol_engine/w:pc tt_um_jisung_protocol_engine/w:retire tt_um_jisung_protocol_engine/w:exec_start tt_um_jisung_protocol_engine/w:instruction
+read_verilog -sv -formal pe_opcode_formal.sv
+hierarchy -check -top pe_opcode_formal
+proc
+# Abstract raw memory storage only; the synchronous read enable and hold
+# are the original behavioral SRAM wrapper's logic.
+memory_collect pe_sram
+select -assert-count 1 pe_sram/t:$mem_v2
+cutpoint pe_sram/t:$mem_v2
+prep -top pe_opcode_formal
+
+[files]
+../src/pe_fifo.v
+../src/pe_core.v
+../src/pe_host.v
+../src/pe_sram.v
+../src/project.v
+pe_opcode_formal.sv

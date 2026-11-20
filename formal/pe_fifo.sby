@@ -1,0 +1,36 @@
+[tasks]
+bit0 prove
+bit1 prove
+bit2 prove
+bit3 prove
+bit4 prove
+bit5 prove
+bit6 prove
+bit7 prove
+cover
+
+[options]
+prove: mode prove
+cover: mode cover
+cover: depth 25
+
+[engines]
+prove: abc pdr
+cover: smtbmc z3
+
+[script]
+prove: read -formal pe_fifo.v pe_fifo_formal.sv
+cover: read -formal -DFIFO_COVER pe_fifo.v pe_fifo_formal.sv
+bit0: chparam -set BIT_INDEX 0 pe_fifo_formal
+bit1: chparam -set BIT_INDEX 1 pe_fifo_formal
+bit2: chparam -set BIT_INDEX 2 pe_fifo_formal
+bit3: chparam -set BIT_INDEX 3 pe_fifo_formal
+bit4: chparam -set BIT_INDEX 4 pe_fifo_formal
+bit5: chparam -set BIT_INDEX 5 pe_fifo_formal
+bit6: chparam -set BIT_INDEX 6 pe_fifo_formal
+bit7: chparam -set BIT_INDEX 7 pe_fifo_formal
+prep -top pe_fifo_formal
+
+[files]
+../src/pe_fifo.v
+pe_fifo_formal.sv
