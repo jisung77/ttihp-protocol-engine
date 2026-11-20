@@ -176,3 +176,68 @@ async def seeded_cycle_differential(dut):
     out = Path(os.getenv("COVERAGE_FILE", "output/isa-coverage.yml"))
     out.parent.mkdir(exist_ok=True, parents=True)
     coverage_db.export_to_yaml(filename=str(out))
+
+
+@CoverPoint("control.branch", xf=lambda condition, taken: (condition, taken),
+            bins=[(0, True)] + [(c, t) for c in (1, 2, 3) for t in (False, True)])
+def observed_branch(condition, taken):
+    pass
+
+
+@CoverPoint("fifo.tx_count", bins=list(range(5)))
+def observed_tx_count(value):
+    pass
+
+
+@CoverPoint("fifo.rx_count", bins=list(range(5)))
+def observed_rx_count(value):
+    pass
+
+
+@CoverPoint("engine.reset_state", bins=[(0, 0, 0, 0, 0)])
+def observed_reset(value):
+    pass
+
+
+@cocotb.test(skip=os.getenv("GATES") == "yes")
+async def branch_fifo_reset_coverage(dut):
+    h = Host(dut)
+    await h.reset()
+    core = dut.user_project
+    observed_reset((int(core.pc.value), int(core.tx_count.value), int(core.rx_count.value),
+                    int(dut.uio_oe.value), int(dut.uo_out.value) >> 5))
+    # At word 1, PC 3 is taken and PC 2 is sequential. Setup instructions
+    # create NONE/OK/TIMEOUT and LC=0/nonzero without reading private registers.
+    for condition, setup, taken in (
+        (0,0x5801,True), (1,0x3000,True), (1,0x3008,False),
+        (2,0x3008,True), (2,0x3000,False), (3,0x5800,True), (3,0x5801,False)
+    ):
+        await h.load(binary([setup,0x5003 | (condition << 8),0,0]))
+        await h.run()
+        for _ in range(4):
+            await h.tick()
+        pc = int(core.pc.value)
+        assert int(core.retire.value) and pc == (3 if taken else 2)
+        observed_branch(condition, pc == 3)
+        await h.tick()
+        await h.tick()
+    # All five TX and RX occupancies originate from actual top-level observations.
+    await h.load(binary([0x7000,0x6800,0x5000]))
+    observed_tx_count(int(core.tx_count.value))
+    observed_rx_count(int(core.rx_count.value))
+    for val in (0x18,0x22,0xff,0xa5):
+        await h.byte_tx(val)
+        observed_tx_count(int(core.tx_count.value))
+    await h.run()
+    for _ in range(25):
+        await h.tick()
+        observed_rx_count(int(core.rx_count.value))
+    for _ in range(4):
+        assert await h.byte_rx() == 0
+    assert await h.command(5) == 0
+    for name in ("control.branch","fifo.tx_count","fifo.rx_count","engine.reset_state"):
+        item = coverage_db[name]
+        assert item.coverage == item.size, (name, item.detailed_coverage)
+    report = Path(os.getenv("COVERAGE_FILE", "output/isa-coverage.yml"))
+    report.parent.mkdir(exist_ok=True, parents=True)
+    coverage_db.export_to_yaml(filename=str(report))

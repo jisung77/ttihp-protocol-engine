@@ -6,6 +6,7 @@ from pathlib import Path
 import cocotb
 from cocotb.triggers import FallingEdge, ReadOnly, RisingEdge, Timer, with_timeout
 from cocotb.utils import get_sim_time
+from cocotb_coverage.coverage import CoverPoint, coverage_db
 from cocotbext.spi import SpiBus, SpiConfig, SpiSlaveBase
 from cocotbext.uart import UartSink, UartSource
 
@@ -195,6 +196,11 @@ def check_spi_frames(samples, mode, tx, rx):
             assert samples[t][2] == (rx[n] >> (7-idx)) & 1
 
 
+@CoverPoint("protocol.spi_mode", bins=[0, 1, 2, 3])
+def observed_spi_mode(mode):
+    pass
+
+
 @cocotb.test(timeout_time=1, timeout_unit="ms")
 @cocotb.parametrize(mode=range(4))
 async def spi_master_full_duplex(dut, mode):
@@ -213,3 +219,7 @@ async def spi_master_full_duplex(dut, mode):
     assert received == list(rx)
     assert not ((await host.status()) & 2)
     check_spi_frames(samples, mode, tx, rx)
+    observed_spi_mode(mode)
+    report = Path(os.getenv("SPI_COVERAGE_FILE", "output/spi-coverage.yml"))
+    report.parent.mkdir(exist_ok=True, parents=True)
+    coverage_db.export_to_yaml(filename=str(report))
