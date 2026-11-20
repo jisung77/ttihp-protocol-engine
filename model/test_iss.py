@@ -30,9 +30,9 @@ def test_partial_commit_preserves_unmasked_data_and_oe():
     ]
 
 
-def test_tlo_is_legal_but_outside_this_model():
-    with pytest.raises(NotImplementedError, match="opcode 0x04"):
-        list(trace_run(bytes.fromhex("01 20  00 00")))
+def test_branch_is_legal_but_outside_this_model():
+    with pytest.raises(NotImplementedError, match="opcode 0x0a"):
+        list(trace_run(bytes.fromhex("00 50  00 00")))
 
 
 @pytest.mark.parametrize(
