@@ -1,35 +1,27 @@
-<!---
-
-This file is used to generate your project datasheet. Please fill in the information below and delete any unused
-sections.
-
-You can also include images in this folder and reference them in the markdown. Each image must be less than
-512 kb in size, and the combined size of all images must be less than 1 MB.
--->
-
 ## How it works
 
-This 8x4 baseline checks the IHP toolchain. The template adder drives the low eight bits of ui_in + uio_in on uo_out. All bidirectional pins are inputs. The adder is combinational and uses neither clk nor rst_n.
+The engine runs one program of up to 256 16-bit words from an IHP single-port SRAM. Each instruction can prepare or commit pin data and output enables, wait on a pin or timer, shift one bit, branch, or transfer one byte through a four-entry FIFO. The host can refill TX and drain RX while the engine runs.
+
+A RUN starts at address zero. The first clock after RUN fetches the instruction and the following clock executes it. Program inputs pass through two synchronization stages. HALT and instruction faults release all eight output enables. The pin data remains available on the digital output path.
 
 ## How to test
 
-From the test directory, run the template cocotb test with make. The test drives ui_in = 20 and uio_in = 30 and checks that uo_out = 50. Check results.xml for test_project and inspect tb.fst for the pin values.
+Select the design and assert reset with REQ low. After releasing reset, keep REQ low through two rising clock edges. To send a nibble, drive it on `ui[3:0]`, toggle REQ on `ui[4]`, and hold the nibble until ACK on `uo[4]` matches REQ. Read the response on `uo[3:0]`. Send the high nibble first in every byte and the low byte first in every 16-bit value.
 
-For the extra baseline checks, activate the RTL virtual environment, open Bash in the test directory and run the following commands. Set `TT_EVIDENCE_DIR` to choose a different evidence directory.
+Send the following hexadecimal bytes to drive pin 0 high and then release it.
 
-```bash
-set -o pipefail
-evidence_dir=$(realpath -m "${TT_EVIDENCE_DIR:-../../evidence}")
-mkdir -p "$evidence_dir" &&
-run_dir=$(mktemp -d "$evidence_dir/rtl-XXXXXXXX") &&
-COCOTB_RESULTS_FILE="$run_dir/results.xml" make -B COCOTB_TEST_MODULES=test,baseline_extra 2>&1 | tee "$run_dir/rtl.log" &&
-python check_baseline_results.py "$run_dir/results.xml" &&
-cp tb.fst "$run_dir/" &&
-printf 'Evidence saved to %s\n' "$run_dir"
-```
+| Host command | Bytes |
+|---|---|
+| Begin a four-word image | `01 04 00` |
+| Prepare pin data | `02 01 08` |
+| Prepare pin direction | `02 01 10` |
+| Commit pin 0 | `02 01 18` |
+| Halt | `02 00 00` |
+| Confirm checksum | `03 03 30` |
+| Run | `04` |
 
-The checker requires both named tests to run once and pass. The extra test covers zero, eight-bit wraparound, and an asymmetric input pair. It also checks that the bidirectional pin output data (`uio_out`) and output enable (`uio_oe`) are both zero. Each run gets a fresh results.xml path. The log and waveform are saved alongside the checked results.
+Each command should finish with response zero. READY rises after END. Count rising edges from the one acknowledging RUN. Pin 0 begins driving high on edge +6 and returns to high impedance on edge +8. A pulldown makes the release visible on a scope.
 
 ## External hardware
 
-The simulation requires no external hardware.
+Use a clock source and a host with four data outputs, one request output and five return inputs for the nibble and ACK. READY, RUNNING and FAULT are available on the three remaining dedicated outputs. A scope or logic analyzer can observe the program pins. The design clock target is 50 MHz.
