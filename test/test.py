@@ -241,3 +241,30 @@ async def branch_fifo_reset_coverage(dut):
     report = Path(os.getenv("COVERAGE_FILE", "output/isa-coverage.yml"))
     report.parent.mkdir(exist_ok=True, parents=True)
     coverage_db.export_to_yaml(filename=str(report))
+
+
+@cocotb.test(skip=os.getenv("GATES") == "yes")
+async def accepted_stop_preempts_same_edge_retire(dut):
+    # §6: STOP's low nibble is accepted at K+6. BR 0 would retire on that edge.
+    h = Host(dut)
+    await h.reset()
+    for image in (binary([0x5000]), binary([0x3028, 0])):
+        dut.uio_in.value = 0
+        await h.load(image)
+        await h.run()
+        start_ns = cocotb.utils.get_sim_time(unit="ns")
+
+        async def raise_raw_pin():
+            for _ in range(3):
+                await h.tick()
+            # Raw pin sampled at K+4 -> WAIT HIGH sees it at K+6.
+            dut.uio_in.value = 1
+
+        pin_task = cocotb.start_soon(raise_raw_pin())
+        assert await h.command(5) == 0
+        await pin_task
+        assert cocotb.utils.get_sim_time(unit="ns") - start_ns == 6 * 20
+        assert int(dut.uo_out.value) & 0xe0 == 0x20
+        p = dut.user_project
+        assert (int(p.pc.value), int(p.exec_start.value), int(p.retire.value)) == (0, 0, 0)
+        assert int(dut.uio_out.value) == 0 and int(dut.uio_oe.value) == 0
