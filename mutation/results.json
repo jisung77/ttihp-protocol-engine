@@ -1,0 +1,746 @@
+{
+  "seed": 18455,
+  "python": "3.12.3",
+  "iverilog": "Icarus Verilog version 12.0 (stable) ()",
+  "cocotb": "2.0.1",
+  "macro": "IHP RM_IHPSG13_1P_256x16_c2_bm_bist functional model",
+  "qualification_percent": 90,
+  "manifest_sha256": "287e22fc1be9177e8d8576a08480d540594bced77000b7b2dd63b5238a43cd80",
+  "junit_hashes": "SHA-256 of the original raw XML, which includes run-specific time and paths.",
+  "frozen": {
+    "source_commit": "ccfb4faa10f522e61cf83d4d3c5e5371e1008bf1",
+    "core_baseline": {
+      "status": "pass",
+      "junit_xml_sha256": "4d084db5f2557f2047a3fe23a891950fee783c2595ff57372d88aed0146fccae",
+      "make_exit": 0,
+      "passed": [
+        "first_pin_trace_and_loader_errors",
+        "selected_pc_wait_fifo_and_fault",
+        "fifo_stop_reset_and_reload",
+        "seeded_cycle_differential",
+        "branch_fifo_reset_coverage"
+      ],
+      "failed": {}
+    },
+    "source_sha256": {
+      "test/sram_model/RM_IHPSG13_1P_256x16_c2_bm_bist.v": "645c475787b077da4dbd15856c68bbae46aa9846a155239eb895ed2de7511053",
+      "test/sram_model/RM_IHPSG13_1P_core_behavioral_bm_bist.v": "d0a6258f8e9c93d1d5b1f78c0a1d66f30d28b1ad8037e5e07f53d1a4e3670b12",
+      "src/project.v": "4d99868ca609ec7b2964574f208f0ca9a9e881c77d592d176418e65b511cbc0a",
+      "src/pe_host.v": "4df232290995fdedf88c63aceaf2c40864fed4c256821c9ba0f7a7f718208dd4",
+      "src/pe_core.v": "a9c1d83bbdb62a9eafce36e251a5bd160b48ce231465e67659934a007d45f505",
+      "src/pe_fifo.v": "f419262a7b04cc822fca4f05ae3ef87b64c907a62c8f5750c684a3f5e65a1243",
+      "src/pe_sram.v": "f4048198d7b580f0eed52792945f1bbee450b8e9ba4314b335d32afa5a60f8fe",
+      "test/tb.v": "d50a7007bdeb13653943e018d0c3780fe7f86b684015ba023336590731fa8416",
+      "test/Makefile": "e45de96937b03c4a14bd4c6b3b2fc57628b02547981a57abee480301976ce1a7",
+      "test/host_driver.py": "e1660dc59d24c0089f6b23d5e50fabd516f9e2b175c98c535e9e1e3199af0ba8",
+      "model/iss.py": "13c18cccf8b8224d59961a24b7ec52d2db98c80a3ca9a5421ad33449d6430310",
+      "model/assembler.py": "11027a4af382eb6f46051eaa3bdb622c1e04ddcf55447b2fd55b93f77b9f7843",
+      "test/test.py": "547e86fe2240558d158441c384563f23f5c6270bffa3fb357b56ec28a78b07e7",
+      "test/test_protocols.py": "9a0198b8ea8669e59f95e372b8882db89f734a548d8c54015ead826b9da225dc",
+      "examples/spi_mode0.asm": "e784e920f790345a4024f5453fa8908ec601871459ef7d1eca3a8fb262622ebf",
+      "examples/spi_mode1.asm": "510f4ca161e6f9a6e1d9ab3a36b1a3da11087af50adcd908def8782ff9e615af",
+      "examples/spi_mode2.asm": "a62d4699a6c858cdf53f81e6cddebfb254806e1f853ebd03ede8960ceaf09cd0",
+      "examples/spi_mode3.asm": "de6affe6037c4c3489a569a61a704862417466a18c297d386e2b55da33725771",
+      "examples/uart_rx.asm": "740a60174600796080061aff826d390a27f9004f39f2eb81e8b19be347e86d8b",
+      "examples/uart_tx.asm": "5811775febe7b789949aa3e28ec720aa9302010442c5ca954c7775547e46164f"
+    },
+    "mutants": {
+      "M01": {
+        "module": "M01/project.v",
+        "module_sha256": "5feab36e379a5190a37dd46dc9d39438a46c711f113b1d996ae17dd687680236",
+        "core": {
+          "status": "fail",
+          "junit_xml_sha256": "ce78d58b34527c01ec5e9149190d72bedd574732af9b7404f1ec0b9696e4cf30",
+          "make_exit": 2,
+          "passed": [
+            "first_pin_trace_and_loader_errors",
+            "fifo_stop_reset_and_reload",
+            "branch_fifo_reset_coverage"
+          ],
+          "failed": {
+            "selected_pc_wait_fifo_and_fault": "AssertionError",
+            "seeded_cycle_differential": "AssertionError"
+          }
+        },
+        "outcome": "killed"
+      },
+      "M02": {
+        "module": "M02/pe_core.v",
+        "module_sha256": "b41df9c7e867a7b72e60a76f37cd4d7c0c591dc749c5e7d98afdce103a028df2",
+        "core": {
+          "status": "fail",
+          "junit_xml_sha256": "bf2d3ffcf19b3d66b93e702f5d0b445ef0f30059d002ebfcb0355cd238e37419",
+          "make_exit": 2,
+          "passed": [
+            "first_pin_trace_and_loader_errors",
+            "selected_pc_wait_fifo_and_fault",
+            "fifo_stop_reset_and_reload",
+            "branch_fifo_reset_coverage"
+          ],
+          "failed": {
+            "seeded_cycle_differential": "AssertionError"
+          }
+        },
+        "outcome": "killed"
+      },
+      "M03": {
+        "module": "M03/pe_core.v",
+        "module_sha256": "e60a80decf11a53914873d2920d393558bd49695736057a87fbe2da5249ed791",
+        "core": {
+          "status": "fail",
+          "junit_xml_sha256": "78dd2469933976ed365d20bfc56d243b7c75e2d145824ebd2adc361df5139969",
+          "make_exit": 2,
+          "passed": [],
+          "failed": {
+            "first_pin_trace_and_loader_errors": "AssertionError",
+            "selected_pc_wait_fifo_and_fault": "AssertionError",
+            "fifo_stop_reset_and_reload": "AssertionError",
+            "seeded_cycle_differential": "AssertionError",
+            "branch_fifo_reset_coverage": "AssertionError"
+          }
+        },
+        "outcome": "killed"
+      },
+      "M04": {
+        "module": "M04/pe_core.v",
+        "module_sha256": "31f88bc134910d1bfb814184d368261c4052f76b355798a3687be89ef803326d",
+        "core": {
+          "status": "fail",
+          "junit_xml_sha256": "2de7b8076d24e5aedfe3c3af84c626e86528d97def389da73027def608ce6451",
+          "make_exit": 2,
+          "passed": [
+            "first_pin_trace_and_loader_errors",
+            "selected_pc_wait_fifo_and_fault",
+            "fifo_stop_reset_and_reload",
+            "branch_fifo_reset_coverage"
+          ],
+          "failed": {
+            "seeded_cycle_differential": "AssertionError"
+          }
+        },
+        "outcome": "killed"
+      },
+      "M05": {
+        "module": "M05/pe_core.v",
+        "module_sha256": "7c357a5d630a21b4a97f0a633e27f3ecea91c2737fc93afdc2e712f1b4fe42ac",
+        "core": {
+          "status": "fail",
+          "junit_xml_sha256": "7de856a666d2714a0bf4ae1d9645e08353a2c23d922f2f424c30353e00cc035c",
+          "make_exit": 2,
+          "passed": [
+            "first_pin_trace_and_loader_errors",
+            "fifo_stop_reset_and_reload",
+            "seeded_cycle_differential"
+          ],
+          "failed": {
+            "selected_pc_wait_fifo_and_fault": "AssertionError",
+            "branch_fifo_reset_coverage": "AssertionError"
+          }
+        },
+        "outcome": "killed"
+      },
+      "M06": {
+        "module": "M06/pe_core.v",
+        "module_sha256": "866e3fee2249d3f5e079cccb675d2d94cc1ff41eb48f4f3030d43d69165ebb95",
+        "core": {
+          "status": "fail",
+          "junit_xml_sha256": "a31a460edb65d7572d1835bc5b07c200709e498fed4a639d736ea31b43a9c4cd",
+          "make_exit": 2,
+          "passed": [
+            "first_pin_trace_and_loader_errors",
+            "fifo_stop_reset_and_reload",
+            "seeded_cycle_differential"
+          ],
+          "failed": {
+            "selected_pc_wait_fifo_and_fault": "AssertionError",
+            "branch_fifo_reset_coverage": "AssertionError"
+          }
+        },
+        "outcome": "killed"
+      },
+      "M07": {
+        "module": "M07/pe_core.v",
+        "module_sha256": "05d05ede53909e4ca5534233458e1bae5e10eacd5d016a177bb6e2a96a95b74b",
+        "core": {
+          "status": "fail",
+          "junit_xml_sha256": "f5605ed3a7edfc87d97efe963c0d92d90cf6681e62148e0b52e30c8ad654dc51",
+          "make_exit": 2,
+          "passed": [
+            "first_pin_trace_and_loader_errors",
+            "selected_pc_wait_fifo_and_fault",
+            "fifo_stop_reset_and_reload",
+            "branch_fifo_reset_coverage"
+          ],
+          "failed": {
+            "seeded_cycle_differential": "AssertionError"
+          }
+        },
+        "outcome": "killed"
+      },
+      "M08": {
+        "module": "M08/pe_core.v",
+        "module_sha256": "d6df9c2a6f77fd8a5f03e2676ccf667a3ce370d4f63c459be0070eff13d9b0dc",
+        "core": {
+          "status": "fail",
+          "junit_xml_sha256": "e37260731175764fac701c0eac6b146249fefa295a616056258f3da59bbca0f2",
+          "make_exit": 2,
+          "passed": [
+            "first_pin_trace_and_loader_errors",
+            "seeded_cycle_differential",
+            "branch_fifo_reset_coverage"
+          ],
+          "failed": {
+            "selected_pc_wait_fifo_and_fault": "AssertionError",
+            "fifo_stop_reset_and_reload": "AssertionError"
+          }
+        },
+        "outcome": "killed"
+      },
+      "M09": {
+        "module": "M09/pe_core.v",
+        "module_sha256": "effbbf3c445ce6ebf6f62eb4789041dff884e7f6d17b514509184cdda77060e2",
+        "core": {
+          "status": "fail",
+          "junit_xml_sha256": "b76a77c181ba32378c48b7ccdce479b5c548ae0bd259cf1b0781de8532cf2923",
+          "make_exit": 2,
+          "passed": [
+            "first_pin_trace_and_loader_errors",
+            "selected_pc_wait_fifo_and_fault",
+            "fifo_stop_reset_and_reload",
+            "branch_fifo_reset_coverage"
+          ],
+          "failed": {
+            "seeded_cycle_differential": "AssertionError"
+          }
+        },
+        "outcome": "killed"
+      },
+      "M10": {
+        "module": "M10/pe_core.v",
+        "module_sha256": "1e2700781bd89ecbc61e581dbdab3ee6cb13467d91b01fd012eb980851146e18",
+        "core": {
+          "status": "fail",
+          "junit_xml_sha256": "eeb64d82cd0275f09358b734b26be38ea2a08799727fd4aacc4e2e0d46426008",
+          "make_exit": 2,
+          "passed": [
+            "first_pin_trace_and_loader_errors",
+            "fifo_stop_reset_and_reload",
+            "seeded_cycle_differential",
+            "branch_fifo_reset_coverage"
+          ],
+          "failed": {
+            "selected_pc_wait_fifo_and_fault": "AssertionError"
+          }
+        },
+        "outcome": "killed"
+      },
+      "M11": {
+        "module": "M11/pe_core.v",
+        "module_sha256": "5e76269113e52ab2089bc63cc48e518ccdec44212e56829cb02f4df11b37fba2",
+        "core": {
+          "status": "fail",
+          "junit_xml_sha256": "ec194fe0b60d2f0bff7eef35838dd07fb2200d0d1c5c312d1801604ea0f0ed60",
+          "make_exit": 2,
+          "passed": [
+            "first_pin_trace_and_loader_errors",
+            "selected_pc_wait_fifo_and_fault",
+            "fifo_stop_reset_and_reload",
+            "seeded_cycle_differential"
+          ],
+          "failed": {
+            "branch_fifo_reset_coverage": "AssertionError"
+          }
+        },
+        "outcome": "killed"
+      },
+      "M12": {
+        "module": "M12/pe_fifo.v",
+        "module_sha256": "d29e639e1f6d9969291fe3a16f6398000f8bfe610e92710ff88bee68763fc3fc",
+        "core": {
+          "status": "fail",
+          "junit_xml_sha256": "72ce4d0d1fc05ac6662dabcc0e41d723493924d658c58f7ffc5a860e57287c2f",
+          "make_exit": 2,
+          "passed": [
+            "first_pin_trace_and_loader_errors",
+            "selected_pc_wait_fifo_and_fault",
+            "seeded_cycle_differential",
+            "branch_fifo_reset_coverage"
+          ],
+          "failed": {
+            "fifo_stop_reset_and_reload": "AssertionError"
+          }
+        },
+        "outcome": "killed"
+      },
+      "M13": {
+        "module": "M13/pe_host.v",
+        "module_sha256": "a8148ad873bfbe723093ccd98f0be30574ec9d3db834d42782471bbc7a5a05b9",
+        "core": {
+          "status": "fail",
+          "junit_xml_sha256": "fbcf8af80e00f84d9d840a66bb69108f36e93bf5e4673c4024cffe4aaac37105",
+          "make_exit": 2,
+          "passed": [
+            "first_pin_trace_and_loader_errors",
+            "selected_pc_wait_fifo_and_fault",
+            "seeded_cycle_differential",
+            "branch_fifo_reset_coverage"
+          ],
+          "failed": {
+            "fifo_stop_reset_and_reload": "AssertionError"
+          }
+        },
+        "outcome": "killed"
+      },
+      "M14": {
+        "module": "M14/pe_host.v",
+        "module_sha256": "f05460b6e2972a1591918d276fa0c403206cc707f86131ce794d718622b7b895",
+        "core": {
+          "status": "fail",
+          "junit_xml_sha256": "ee414129239e077892eca9a28cc5566c1170d726b4e8e07b1121218067594a02",
+          "make_exit": 2,
+          "passed": [],
+          "failed": {
+            "first_pin_trace_and_loader_errors": "AssertionError",
+            "selected_pc_wait_fifo_and_fault": "AssertionError",
+            "fifo_stop_reset_and_reload": "AssertionError",
+            "seeded_cycle_differential": "AssertionError",
+            "branch_fifo_reset_coverage": "AssertionError"
+          }
+        },
+        "outcome": "killed"
+      },
+      "M15": {
+        "module": "M15/pe_core.v",
+        "module_sha256": "f9e626a94dcb11204ce59bce490cf52cc6bd23c13a108d3cb26c05a50d46754d",
+        "core": {
+          "status": "pass",
+          "junit_xml_sha256": "6fb6a41e451857f9915c61422d0177bbcec95df530b978e8cc18d36ecbac15c1",
+          "make_exit": 0,
+          "passed": [
+            "first_pin_trace_and_loader_errors",
+            "selected_pc_wait_fifo_and_fault",
+            "fifo_stop_reset_and_reload",
+            "seeded_cycle_differential",
+            "branch_fifo_reset_coverage"
+          ],
+          "failed": {}
+        },
+        "protocol": {
+          "status": "pass",
+          "junit_xml_sha256": "d781b1a449520786292961d85b65daf809f28652cd0bd85b55b9c9922e0d3d4e",
+          "make_exit": 0,
+          "passed": [
+            "uart_tx_8n1_all_bytes",
+            "uart_rx_phase_and_rate/rate=112896",
+            "uart_rx_phase_and_rate/rate=115200",
+            "uart_rx_phase_and_rate/rate=117504",
+            "spi_master_full_duplex/mode=0",
+            "spi_master_full_duplex/mode=1",
+            "spi_master_full_duplex/mode=2",
+            "spi_master_full_duplex/mode=3"
+          ],
+          "failed": {}
+        },
+        "outcome": "survived"
+      }
+    },
+    "source_adjustment": "Append one LF byte to test/test.py for exact frozen input bytes.",
+    "capture_head": "c6397f553aa1349ef04e2ecb2d9944d34fee934f",
+    "protocol_baseline": {
+      "status": "pass",
+      "junit_xml_sha256": "a9cded9c300b60122659855d3517a7321c6714c1d3deaca3cf9dc2977038f5fd",
+      "make_exit": 0,
+      "passed": [
+        "uart_tx_8n1_all_bytes",
+        "uart_rx_phase_and_rate/rate=112896",
+        "uart_rx_phase_and_rate/rate=115200",
+        "uart_rx_phase_and_rate/rate=117504",
+        "spi_master_full_duplex/mode=0",
+        "spi_master_full_duplex/mode=1",
+        "spi_master_full_duplex/mode=2",
+        "spi_master_full_duplex/mode=3"
+      ],
+      "failed": {}
+    },
+    "score": {
+      "killed": 14,
+      "valid_predeclared_mutants": 15,
+      "awaiting_verdict": 0,
+      "survivors": [
+        "M15"
+      ],
+      "percent": 93.333333,
+      "equivalent": 0,
+      "compile_failures": 0
+    }
+  },
+  "updated": {
+    "source_commit": "37963ca1189e088ff444d8dcf439d33fd5b70523",
+    "core_baseline": {
+      "status": "pass",
+      "junit_xml_sha256": "6276836681df310f614a34552293f8cd4b84e41d4498364b59d3bb144292442a",
+      "make_exit": 0,
+      "passed": [
+        "first_pin_trace_and_loader_errors",
+        "selected_pc_wait_fifo_and_fault",
+        "fifo_stop_reset_and_reload",
+        "seeded_cycle_differential",
+        "branch_fifo_reset_coverage",
+        "accepted_stop_preempts_same_edge_retire"
+      ],
+      "failed": {}
+    },
+    "source_sha256": {
+      "test/sram_model/RM_IHPSG13_1P_256x16_c2_bm_bist.v": "645c475787b077da4dbd15856c68bbae46aa9846a155239eb895ed2de7511053",
+      "test/sram_model/RM_IHPSG13_1P_core_behavioral_bm_bist.v": "d0a6258f8e9c93d1d5b1f78c0a1d66f30d28b1ad8037e5e07f53d1a4e3670b12",
+      "src/project.v": "4d99868ca609ec7b2964574f208f0ca9a9e881c77d592d176418e65b511cbc0a",
+      "src/pe_host.v": "4df232290995fdedf88c63aceaf2c40864fed4c256821c9ba0f7a7f718208dd4",
+      "src/pe_core.v": "a9c1d83bbdb62a9eafce36e251a5bd160b48ce231465e67659934a007d45f505",
+      "src/pe_fifo.v": "f419262a7b04cc822fca4f05ae3ef87b64c907a62c8f5750c684a3f5e65a1243",
+      "src/pe_sram.v": "f4048198d7b580f0eed52792945f1bbee450b8e9ba4314b335d32afa5a60f8fe",
+      "test/tb.v": "d50a7007bdeb13653943e018d0c3780fe7f86b684015ba023336590731fa8416",
+      "test/Makefile": "e45de96937b03c4a14bd4c6b3b2fc57628b02547981a57abee480301976ce1a7",
+      "test/host_driver.py": "e1660dc59d24c0089f6b23d5e50fabd516f9e2b175c98c535e9e1e3199af0ba8",
+      "model/iss.py": "13c18cccf8b8224d59961a24b7ec52d2db98c80a3ca9a5421ad33449d6430310",
+      "model/assembler.py": "11027a4af382eb6f46051eaa3bdb622c1e04ddcf55447b2fd55b93f77b9f7843",
+      "test/test.py": "c14d19ed37308f39089c94e8474f5c27798ecda3c059fefeaa58e03640976ec7",
+      "test/test_protocols.py": "9a0198b8ea8669e59f95e372b8882db89f734a548d8c54015ead826b9da225dc",
+      "examples/spi_mode0.asm": "e784e920f790345a4024f5453fa8908ec601871459ef7d1eca3a8fb262622ebf",
+      "examples/spi_mode1.asm": "510f4ca161e6f9a6e1d9ab3a36b1a3da11087af50adcd908def8782ff9e615af",
+      "examples/spi_mode2.asm": "a62d4699a6c858cdf53f81e6cddebfb254806e1f853ebd03ede8960ceaf09cd0",
+      "examples/spi_mode3.asm": "de6affe6037c4c3489a569a61a704862417466a18c297d386e2b55da33725771",
+      "examples/uart_rx.asm": "740a60174600796080061aff826d390a27f9004f39f2eb81e8b19be347e86d8b",
+      "examples/uart_tx.asm": "5811775febe7b789949aa3e28ec720aa9302010442c5ca954c7775547e46164f"
+    },
+    "mutants": {
+      "M01": {
+        "module": "M01/project.v",
+        "module_sha256": "5feab36e379a5190a37dd46dc9d39438a46c711f113b1d996ae17dd687680236",
+        "core": {
+          "status": "fail",
+          "junit_xml_sha256": "e984a17d9d3a0212e3dd17f870e4c27c8f2fbd8899f159a8138d12d9b55e33cb",
+          "make_exit": 2,
+          "passed": [
+            "first_pin_trace_and_loader_errors",
+            "fifo_stop_reset_and_reload",
+            "branch_fifo_reset_coverage",
+            "accepted_stop_preempts_same_edge_retire"
+          ],
+          "failed": {
+            "selected_pc_wait_fifo_and_fault": "AssertionError",
+            "seeded_cycle_differential": "AssertionError"
+          }
+        },
+        "outcome": "killed"
+      },
+      "M02": {
+        "module": "M02/pe_core.v",
+        "module_sha256": "b41df9c7e867a7b72e60a76f37cd4d7c0c591dc749c5e7d98afdce103a028df2",
+        "core": {
+          "status": "fail",
+          "junit_xml_sha256": "6b37d61a42e509102eee17819c7669b6dfdc5b6b96f06439485e380e13d7f6f3",
+          "make_exit": 2,
+          "passed": [
+            "first_pin_trace_and_loader_errors",
+            "selected_pc_wait_fifo_and_fault",
+            "fifo_stop_reset_and_reload",
+            "branch_fifo_reset_coverage",
+            "accepted_stop_preempts_same_edge_retire"
+          ],
+          "failed": {
+            "seeded_cycle_differential": "AssertionError"
+          }
+        },
+        "outcome": "killed"
+      },
+      "M03": {
+        "module": "M03/pe_core.v",
+        "module_sha256": "e60a80decf11a53914873d2920d393558bd49695736057a87fbe2da5249ed791",
+        "core": {
+          "status": "fail",
+          "junit_xml_sha256": "3ce37b31d940d492090948ba5c7690fbcbb6830424c1a855cfa3161fa618291e",
+          "make_exit": 2,
+          "passed": [],
+          "failed": {
+            "first_pin_trace_and_loader_errors": "AssertionError",
+            "selected_pc_wait_fifo_and_fault": "AssertionError",
+            "fifo_stop_reset_and_reload": "AssertionError",
+            "seeded_cycle_differential": "AssertionError",
+            "branch_fifo_reset_coverage": "AssertionError",
+            "accepted_stop_preempts_same_edge_retire": "AssertionError"
+          }
+        },
+        "outcome": "killed"
+      },
+      "M04": {
+        "module": "M04/pe_core.v",
+        "module_sha256": "31f88bc134910d1bfb814184d368261c4052f76b355798a3687be89ef803326d",
+        "core": {
+          "status": "fail",
+          "junit_xml_sha256": "f8f22278f63c5d955cd104b3c76bd2024c897bff3bf037fe6f58378d9401cb59",
+          "make_exit": 2,
+          "passed": [
+            "first_pin_trace_and_loader_errors",
+            "selected_pc_wait_fifo_and_fault",
+            "fifo_stop_reset_and_reload",
+            "branch_fifo_reset_coverage",
+            "accepted_stop_preempts_same_edge_retire"
+          ],
+          "failed": {
+            "seeded_cycle_differential": "AssertionError"
+          }
+        },
+        "outcome": "killed"
+      },
+      "M05": {
+        "module": "M05/pe_core.v",
+        "module_sha256": "7c357a5d630a21b4a97f0a633e27f3ecea91c2737fc93afdc2e712f1b4fe42ac",
+        "core": {
+          "status": "fail",
+          "junit_xml_sha256": "bf4baa7d9409e6513354a118fb11c10ffdea411283502eb98e5cddd30a113003",
+          "make_exit": 2,
+          "passed": [
+            "first_pin_trace_and_loader_errors",
+            "fifo_stop_reset_and_reload",
+            "seeded_cycle_differential",
+            "accepted_stop_preempts_same_edge_retire"
+          ],
+          "failed": {
+            "selected_pc_wait_fifo_and_fault": "AssertionError",
+            "branch_fifo_reset_coverage": "AssertionError"
+          }
+        },
+        "outcome": "killed"
+      },
+      "M06": {
+        "module": "M06/pe_core.v",
+        "module_sha256": "866e3fee2249d3f5e079cccb675d2d94cc1ff41eb48f4f3030d43d69165ebb95",
+        "core": {
+          "status": "fail",
+          "junit_xml_sha256": "4f1894696d2ea70a8e9dc605a84d54c20936dfb8cac53c22baf114237996fd0d",
+          "make_exit": 2,
+          "passed": [
+            "first_pin_trace_and_loader_errors",
+            "fifo_stop_reset_and_reload",
+            "seeded_cycle_differential",
+            "accepted_stop_preempts_same_edge_retire"
+          ],
+          "failed": {
+            "selected_pc_wait_fifo_and_fault": "AssertionError",
+            "branch_fifo_reset_coverage": "AssertionError"
+          }
+        },
+        "outcome": "killed"
+      },
+      "M07": {
+        "module": "M07/pe_core.v",
+        "module_sha256": "05d05ede53909e4ca5534233458e1bae5e10eacd5d016a177bb6e2a96a95b74b",
+        "core": {
+          "status": "fail",
+          "junit_xml_sha256": "33b56ebe44988f7930b7f49eb4f22b6f0f006d88f040d013c717b9679fda010b",
+          "make_exit": 2,
+          "passed": [
+            "first_pin_trace_and_loader_errors",
+            "selected_pc_wait_fifo_and_fault",
+            "fifo_stop_reset_and_reload",
+            "branch_fifo_reset_coverage",
+            "accepted_stop_preempts_same_edge_retire"
+          ],
+          "failed": {
+            "seeded_cycle_differential": "AssertionError"
+          }
+        },
+        "outcome": "killed"
+      },
+      "M08": {
+        "module": "M08/pe_core.v",
+        "module_sha256": "d6df9c2a6f77fd8a5f03e2676ccf667a3ce370d4f63c459be0070eff13d9b0dc",
+        "core": {
+          "status": "fail",
+          "junit_xml_sha256": "3acf80448675e772dccfe2a8e7468bc92a291dc64427eaea5bff389b6aef6a0e",
+          "make_exit": 2,
+          "passed": [
+            "first_pin_trace_and_loader_errors",
+            "seeded_cycle_differential",
+            "branch_fifo_reset_coverage",
+            "accepted_stop_preempts_same_edge_retire"
+          ],
+          "failed": {
+            "selected_pc_wait_fifo_and_fault": "AssertionError",
+            "fifo_stop_reset_and_reload": "AssertionError"
+          }
+        },
+        "outcome": "killed"
+      },
+      "M09": {
+        "module": "M09/pe_core.v",
+        "module_sha256": "effbbf3c445ce6ebf6f62eb4789041dff884e7f6d17b514509184cdda77060e2",
+        "core": {
+          "status": "fail",
+          "junit_xml_sha256": "c64ff812b50814b7e64d9ee481c3bd7c07d56bf7caf8d495cf70a52ce714ae61",
+          "make_exit": 2,
+          "passed": [
+            "first_pin_trace_and_loader_errors",
+            "selected_pc_wait_fifo_and_fault",
+            "fifo_stop_reset_and_reload",
+            "branch_fifo_reset_coverage",
+            "accepted_stop_preempts_same_edge_retire"
+          ],
+          "failed": {
+            "seeded_cycle_differential": "AssertionError"
+          }
+        },
+        "outcome": "killed"
+      },
+      "M10": {
+        "module": "M10/pe_core.v",
+        "module_sha256": "1e2700781bd89ecbc61e581dbdab3ee6cb13467d91b01fd012eb980851146e18",
+        "core": {
+          "status": "fail",
+          "junit_xml_sha256": "e7ef3bf80b33089329dbf5f8bc3ecca6b25265b544d5291565fe722f783e562b",
+          "make_exit": 2,
+          "passed": [
+            "first_pin_trace_and_loader_errors",
+            "fifo_stop_reset_and_reload",
+            "seeded_cycle_differential",
+            "branch_fifo_reset_coverage",
+            "accepted_stop_preempts_same_edge_retire"
+          ],
+          "failed": {
+            "selected_pc_wait_fifo_and_fault": "AssertionError"
+          }
+        },
+        "outcome": "killed"
+      },
+      "M11": {
+        "module": "M11/pe_core.v",
+        "module_sha256": "5e76269113e52ab2089bc63cc48e518ccdec44212e56829cb02f4df11b37fba2",
+        "core": {
+          "status": "fail",
+          "junit_xml_sha256": "9242251963761575e067641c8f2da6eb79eb45d5e6075826f221525d8b9b4a8a",
+          "make_exit": 2,
+          "passed": [
+            "first_pin_trace_and_loader_errors",
+            "selected_pc_wait_fifo_and_fault",
+            "fifo_stop_reset_and_reload",
+            "seeded_cycle_differential",
+            "accepted_stop_preempts_same_edge_retire"
+          ],
+          "failed": {
+            "branch_fifo_reset_coverage": "AssertionError"
+          }
+        },
+        "outcome": "killed"
+      },
+      "M12": {
+        "module": "M12/pe_fifo.v",
+        "module_sha256": "d29e639e1f6d9969291fe3a16f6398000f8bfe610e92710ff88bee68763fc3fc",
+        "core": {
+          "status": "fail",
+          "junit_xml_sha256": "af657efd5326aa1383ee715928c52b10ab52e7b9d22386028fbe7dba1997a85e",
+          "make_exit": 2,
+          "passed": [
+            "first_pin_trace_and_loader_errors",
+            "selected_pc_wait_fifo_and_fault",
+            "seeded_cycle_differential",
+            "branch_fifo_reset_coverage",
+            "accepted_stop_preempts_same_edge_retire"
+          ],
+          "failed": {
+            "fifo_stop_reset_and_reload": "AssertionError"
+          }
+        },
+        "outcome": "killed"
+      },
+      "M13": {
+        "module": "M13/pe_host.v",
+        "module_sha256": "a8148ad873bfbe723093ccd98f0be30574ec9d3db834d42782471bbc7a5a05b9",
+        "core": {
+          "status": "fail",
+          "junit_xml_sha256": "3a0cf228cd1081fc25cb06528cd103942ef8b1d39e3cd6f7edfec9d7ce71986e",
+          "make_exit": 2,
+          "passed": [
+            "first_pin_trace_and_loader_errors",
+            "selected_pc_wait_fifo_and_fault",
+            "seeded_cycle_differential",
+            "branch_fifo_reset_coverage",
+            "accepted_stop_preempts_same_edge_retire"
+          ],
+          "failed": {
+            "fifo_stop_reset_and_reload": "AssertionError"
+          }
+        },
+        "outcome": "killed"
+      },
+      "M14": {
+        "module": "M14/pe_host.v",
+        "module_sha256": "f05460b6e2972a1591918d276fa0c403206cc707f86131ce794d718622b7b895",
+        "core": {
+          "status": "fail",
+          "junit_xml_sha256": "5ef12a717f19fb42ca66d5a56809b2d9c4829104cd5f368b24a4e50c4a49d0ca",
+          "make_exit": 2,
+          "passed": [
+            "accepted_stop_preempts_same_edge_retire"
+          ],
+          "failed": {
+            "first_pin_trace_and_loader_errors": "AssertionError",
+            "selected_pc_wait_fifo_and_fault": "AssertionError",
+            "fifo_stop_reset_and_reload": "AssertionError",
+            "seeded_cycle_differential": "AssertionError",
+            "branch_fifo_reset_coverage": "AssertionError"
+          }
+        },
+        "outcome": "killed"
+      },
+      "M15": {
+        "module": "M15/pe_core.v",
+        "module_sha256": "f9e626a94dcb11204ce59bce490cf52cc6bd23c13a108d3cb26c05a50d46754d",
+        "core": {
+          "status": "fail",
+          "junit_xml_sha256": "272f972623bd0541e26ed3786a91798b0019fb62a7f4617a01aa13627eb924d0",
+          "make_exit": 2,
+          "passed": [
+            "first_pin_trace_and_loader_errors",
+            "selected_pc_wait_fifo_and_fault",
+            "fifo_stop_reset_and_reload",
+            "seeded_cycle_differential",
+            "branch_fifo_reset_coverage"
+          ],
+          "failed": {
+            "accepted_stop_preempts_same_edge_retire": "AssertionError"
+          }
+        },
+        "outcome": "killed"
+      }
+    },
+    "score": {
+      "killed": 15,
+      "valid_predeclared_mutants": 15,
+      "awaiting_verdict": 0,
+      "survivors": [],
+      "percent": 100.0,
+      "equivalent": 0,
+      "compile_failures": 0
+    }
+  },
+  "unscored_stop_witness": {
+    "baseline": {
+      "status": "pass",
+      "junit_xml_sha256": "027a1ddfcdc6b6067ef733bb9cb4c2f8889e7072c642b87072a94923037b5c00",
+      "make_exit": 0,
+      "passed": [
+        "stop_on_branch_execute"
+      ],
+      "failed": {}
+    },
+    "M15": {
+      "status": "fail",
+      "junit_xml_sha256": "9e40a5349982c54afa32fa38d61ed93448e0fffd036e5cf16511631ae4ea5f2b",
+      "make_exit": 2,
+      "passed": [],
+      "failed": {
+        "stop_on_branch_execute": "AssertionError"
+      }
+    }
+  }
+}

@@ -1,0 +1,137 @@
+[
+  {
+    "id": "M01",
+    "file": "project.v",
+    "spec": "§2",
+    "description": "Raw input bypasses both synchronizer stages",
+    "original": ".pins(pins_sync)",
+    "replacement": ".pins(uio_in)",
+    "witness": "RISE on pin 0 just before a WAIT execution edge."
+  },
+  {
+    "id": "M02",
+    "file": "pe_core.v",
+    "spec": "§3",
+    "description": "COMMIT also updates unselected output bits",
+    "original": "data_out <= (data_out & ~imm) | (prepared_data & imm);",
+    "replacement": "data_out <= prepared_data;",
+    "witness": "DATA 0x81; COMMIT 0x01 exposes an unselected new bit."
+  },
+  {
+    "id": "M03",
+    "file": "pe_core.v",
+    "spec": "§6",
+    "description": "Reset drives output-enable bit 0",
+    "original": "if (!reset_n) begin\n            pc <= 0;\n            prepared_data <= 0;\n            prepared_oe <= 0;\n            data_out <= 0;\n            oe_out <= 0;",
+    "replacement": "if (!reset_n) begin\n            pc <= 0;\n            prepared_data <= 0;\n            prepared_oe <= 0;\n            data_out <= 0;\n            oe_out <= 1;",
+    "witness": "Assert reset and inspect uio_oe[0]."
+  },
+  {
+    "id": "M04",
+    "file": "pe_core.v",
+    "spec": "§4",
+    "description": "DELAY retires one clock early",
+    "original": "DELAY: can_finish = ticks_left == 0;",
+    "replacement": "DELAY: can_finish = ticks_left <= 1;",
+    "witness": "TLO 1; DELAY should retire at S+1."
+  },
+  {
+    "id": "M05",
+    "file": "pe_core.v",
+    "spec": "§4",
+    "description": "Finite WAIT gives expiry priority over a final-edge match",
+    "original": "WAIT_PIN: wait_result <= pin_match ? MATCH : TIMEOUT;",
+    "replacement": "WAIT_PIN: wait_result <= (!arg[5] && ticks_left == 0) ? TIMEOUT : MATCH;",
+    "witness": "Arrange a RISE only on N=S+T then branch on WAIT OK."
+  },
+  {
+    "id": "M06",
+    "file": "pe_core.v",
+    "spec": "§3",
+    "description": "BR OK takes the timeout path",
+    "original": "1: branch_condition = wait_result == MATCH;",
+    "replacement": "1: branch_condition = wait_result == TIMEOUT;",
+    "witness": "WAIT LOW while pin is low, then BR OK to a nonsequential address."
+  },
+  {
+    "id": "M07",
+    "file": "pe_core.v",
+    "spec": "§3",
+    "description": "DJNZ branches once too often",
+    "original": "(op == DJNZ && lc > 1)",
+    "replacement": "(op == DJNZ && lc > 0)",
+    "witness": "LSET 1; DJNZ 0 should decrement and fall through."
+  },
+  {
+    "id": "M08",
+    "file": "pe_core.v",
+    "spec": "§3",
+    "description": "SHIN MSB-first inserts the sample at bit 7",
+    "original": "{isr[6:0], pins[pin]}",
+    "replacement": "{pins[pin], isr[7:1]}",
+    "witness": "SHIN a high pin into cleared ISR and PUSH; the host should receive 0x01."
+  },
+  {
+    "id": "M09",
+    "file": "pe_core.v",
+    "spec": "§3",
+    "description": "SHOUT shifts OSR left in the LSB-first case",
+    "original": "osr <= arg[3] ? {1'b0, osr[7:1]} : {osr[6:0], 1'b0};",
+    "replacement": "osr <= {osr[6:0], 1'b0};",
+    "witness": "SRIMM 2 followed by two LSB-first SHOUTs should emit 0 then 1."
+  },
+  {
+    "id": "M10",
+    "file": "pe_core.v",
+    "spec": "§3",
+    "description": "Sequential PC wraps before validation",
+    "original": "{1'b0, pc} + 9'd1",
+    "replacement": "{1'b0, (pc + 8'd1)}",
+    "witness": "PUSH at address 255 of a 256-word image should fault without RX insertion."
+  },
+  {
+    "id": "M11",
+    "file": "pe_core.v",
+    "spec": "§5",
+    "description": "Engine PUSH declares FIFO full one byte early",
+    "original": "PUSH: can_finish = rx_count < 4;",
+    "replacement": "PUSH: can_finish = rx_count < 3;",
+    "witness": "With RX count 3, PUSH accepts the fourth byte before any host RX."
+  },
+  {
+    "id": "M12",
+    "file": "pe_fifo.v",
+    "spec": "§5",
+    "description": "FIFO read pointer skips every other entry",
+    "original": "if (take) rd_ptr <= rd_ptr + 1'b1;",
+    "replacement": "if (take) rd_ptr <= rd_ptr + 2'd2;",
+    "witness": "Read two consecutive queued distinct bytes and compare insertion order."
+  },
+  {
+    "id": "M13",
+    "file": "pe_host.v",
+    "spec": "§5–6",
+    "description": "Full TX returns state rejection instead of retry",
+    "original": "else if (tx_count == 4) code = RETRY;",
+    "replacement": "else if (tx_count == 4) code = REJECT;",
+    "witness": "Send TX to a full ready FIFO and check response 1."
+  },
+  {
+    "id": "M14",
+    "file": "pe_host.v",
+    "spec": "§6",
+    "description": "Loader accumulates XOR rather than the word sum",
+    "original": "checksum <= checksum + write_data;",
+    "replacement": "checksum <= checksum ^ write_data;",
+    "witness": "Load words sharing a set bit then END with their 16-bit sum."
+  },
+  {
+    "id": "M15",
+    "file": "pe_core.v",
+    "spec": "§2, §6",
+    "description": "STOP permits same-edge retirement",
+    "original": "wire active = running && phase != FETCH && !stop;",
+    "replacement": "wire active = running && phase != FETCH;",
+    "witness": "Loop BR 0 and accept STOP on an execution edge; retire must be low."
+  }
+]
