@@ -1,42 +1,26 @@
-![](../../workflows/gds/badge.svg) ![](../../workflows/docs/badge.svg) ![](../../workflows/test/badge.svg) ![](../../workflows/fpga/badge.svg)
+# 프로그래머블 프로토콜 엔진
 
-# Tiny Tapeout Verilog Project Template
+[실행 확인] 16비트 명령을 적재해 여덟 양방향 핀의 데이터·방향·입력 샘플 시점을 제어하는 단일 컨텍스트 엔진이다. IHP CMOS5L용 Tiny Tapeout 인터페이스와 256×16 단일 포트 SRAM을 사용한다. UART TX/RX 및 네 가지 SPI 마스터 모드는 같은 RTL에서 서로 다른 프로그램으로 실행된다. [핀맵과 첫 적재 예제](docs/info.md) · [명령어와 클록 규칙](spec/spec.md)
 
-- [Read the documentation for project](docs/info.md)
+## 첫 프로그램
 
-## What is Tiny Tapeout?
+호스트에서 다음 명령을 실행하면 UART 송신 예제가 로더에 넣을 수 있는 리틀엔디언 바이너리가 된다. 준비된 프로그램은 FIFO에서 바이트를 받아 핀 0에 8N1 프레임을 출력한다. [어셈블리와 예제 설명](examples/README.md)
 
-Tiny Tapeout is an educational project that aims to make it easier and cheaper than ever to get your digital and analog designs manufactured on a real chip.
+```sh
+python -m model.assembler examples/uart_tx.asm uart_tx.bin
+```
 
-To learn more and get started, visit https://tinytapeout.com.
+## 검증
 
-## Set up your Verilog project
+[실행 확인] 검증용 Python ISS와 회로는 같은 명세로 독립 작성했다. cocotb는 로더로 프로그램을 적재하고 외부 핀과 클록별 실행 상태를 검사한다. 별도의 UART 수신기와 SPI 타깃이 실제 RTL 핀 전이를 해석한다. [검증 실행법](test/README.md) · [검증 계획](docs/verification_plan.md)
 
-1. Add your Verilog files to the `src` folder.
-2. Edit the [info.yaml](info.yaml) and update information about your project, paying special attention to the `source_files` and `top_module` properties. If you are upgrading an existing Tiny Tapeout project, check out our [online info.yaml migration tool](https://tinytapeout.github.io/tt-yaml-upgrade-tool/).
-3. Edit [docs/info.md](docs/info.md) and add a description of your project.
-4. Adapt the testbench to your design. See [test/README.md](test/README.md) for more information.
+[추론] 클록 제약은 20 ns이며 예제 시각은 50 MHz 가정이다. 제작 공정의 속도와 14일차 면적 기준은 배선 후 결과로 판정한다. [Tiny Tapeout 공식 플로](https://www.tinytapeout.com/guides/local-hardening/)
 
-The GitHub action will automatically build the ASIC files using [LibreLane](https://www.zerotoasiccourse.com/terminology/librelane/).
+## AI 활용
 
-## Enable GitHub actions to build the results page
+[실행 확인] Jisung IC가 설계 범위와 WAIT의 첫 상승 에지 규칙을 정하고 v0.1 설계 판단을 위임했다. Claude Code의 계획·비판 검토 서브에이전트는 일반 검증 과제를 나눴다. Codex의 분리된 역할은 명세, RTL, ISS·검증 벡터와 실행을 담당했다. IHP SRAM 시뮬레이션 모델과 전원망 보조 코드의 원출처는 아래에 있다. [IHP 모델 출처](test/sram_model/README.md) · [공식 SRAM 통합 예제](https://github.com/TinyTapeout/ttihp-cmos5l-sram-example/tree/15ac9bc8560384d1ca7b24e5df0b7b82357d98db)
 
-- [Enabling GitHub Pages](https://tinytapeout.com/faq/#my-github-action-is-failing-on-the-pages-part)
+## 사람이 직접 확인할 지점
 
-## Resources
-
-- [FAQ](https://tinytapeout.com/faq/)
-- [Digital design lessons](https://tinytapeout.com/digital_design/)
-- [Learn how semiconductors work](https://tinytapeout.com/siliwiz/)
-- [Join the community](https://tinytapeout.com/discord)
-- [Build your design locally](https://www.tinytapeout.com/guides/local-hardening/)
-
-## What next?
-
-- [Submit your design to the next shuttle](https://app.tinytapeout.com/).
-- Edit [this README](README.md) and explain your design, how it works, and how to test it.
-- Share your project on your social network of choice:
-  - LinkedIn [#tinytapeout](https://www.linkedin.com/search/results/content/?keywords=%23tinytapeout) [@TinyTapeout](https://www.linkedin.com/company/100708654/)
-  - Mastodon [#tinytapeout](https://chaos.social/tags/tinytapeout) [@matthewvenn](https://chaos.social/@matthewvenn)
-  - X (formerly Twitter) [#tinytapeout](https://twitter.com/hashtag/tinytapeout) [@tinytapeout](https://twitter.com/tinytapeout)
-  - Bluesky [@tinytapeout.com](https://bsky.app/profile/tinytapeout.com)
+- 첫 핀 예제에서 DATA와 OE를 준비할 때, COMMIT할 때, HALT할 때의 핀 방향을 비교한다.
+- UART와 SPI에서 외부 검사기가 샘플하는 에지를 예제의 계산과 대조한다.

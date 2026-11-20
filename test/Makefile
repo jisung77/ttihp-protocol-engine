@@ -6,12 +6,18 @@ SIM ?= icarus
 FST ?= -fst # Use more efficient FST format
 TOPLEVEL_LANG ?= verilog
 SRC_DIR = $(PWD)/../src
-PROJECT_SOURCES = project.v
+PROJECT_SOURCES = project.v pe_host.v pe_core.v pe_fifo.v pe_sram.v
+export PYTHONPATH := $(abspath ..):$(PYTHONPATH)
+
+# The same IHP functional macro serves RTL and gate-level simulation.
+VERILOG_SOURCES += $(PWD)/sram_model/RM_IHPSG13_1P_256x16_c2_bm_bist.v
+VERILOG_SOURCES += $(PWD)/sram_model/RM_IHPSG13_1P_core_behavioral_bm_bist.v
+COMPILE_ARGS += -DFUNCTIONAL -DPE_PDK_SRAM_MODEL
 
 ifneq ($(GATES),yes)
 
 # RTL simulation:
-SIM_BUILD				= sim_build/rtl
+SIM_BUILD = sim_build/rtl
 VERILOG_SOURCES += $(addprefix $(SRC_DIR)/,$(PROJECT_SOURCES))
 
 else
@@ -43,7 +49,7 @@ VERILOG_SOURCES += $(PWD)/tb.v
 TOPLEVEL = tb
 
 # List test modules to run, separated by commas and without the .py suffix:
-COCOTB_TEST_MODULES = test
+COCOTB_TEST_MODULES = test,test_protocols
 
 # include cocotb's make rules to take care of the simulator setup
 include $(shell cocotb-config --makefiles)/Makefile.sim
