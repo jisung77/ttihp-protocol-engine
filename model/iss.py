@@ -1,13 +1,12 @@
-"""Cycle trace from an accepted RUN (K) through HALT or an accepted STOP.
+"""Cycle-level reference for one accepted RUN of a decoded loader payload.
 
-Input is the program payload in loader byte order, without commands or nibbles.
-This slice supports HALT through DELAY (opcodes 0x00..0x07).
-Malformed images, invalid supported instructions and sequential fall-through
-raise ValueError when encountered. Other defined opcodes raise NotImplementedError
-before their operands are inspected. This slice does not simulate fault edges.
+trace_engine exposes architectural state and FIFO transactions through HALT,
+STOP, or fault. trace_timed and trace_run retain their smaller observations
+and raise ValueError if the program faults.
 """
 
-from collections.abc import Iterable, Iterator
+from collections import deque
+from collections.abc import Iterable, Iterator, Mapping
 from typing import NamedTuple
 
 
@@ -30,9 +29,31 @@ class TimedEdge(NamedTuple):
     wait_result: str
 
 
+class EngineStep(NamedTuple):
+    """Post-edge ISA state, FIFO accept pulses and an optional terminal fault."""
+
+    edge: Edge
+    wait_result: str
+    lc: int
+    osr: int
+    isr: int
+    tx_count: int
+    rx_count: int
+    tx_pop: bool
+    rx_push: bool
+    host_tx_ok: bool
+    host_rx_ok: bool
+    host_rx_data: int | None
+    fault_reason: str | None
+
+    @property
+    def fault(self) -> bool:
+        return self.fault_reason is not None
+
+
 def _byte(raw: int) -> int:
     if not isinstance(raw, int) or not 0 <= raw <= 0xFF:
-        raise ValueError("expected uio_in sample in 0..255")
+        raise ValueError("expected byte in 0..255")
     return raw
 
 
@@ -72,35 +93,54 @@ def _wait_matches(operand: int, sample: int | None, previous: int | None) -> boo
     return was_high and not high  # FALL
 
 
-def _check_instruction(opcode: int, operand: int, pc: int, words: int) -> None:
-    if 0x08 <= opcode <= 0x0F:
-        raise NotImplementedError(f"opcode {opcode:#04x} not yet modeled at PC {pc}")
+def _next_pc(opcode: int, operand: int, pc: int, words: int,
+             wait_result: str, lc: int) -> int:
+    """§3: validate the encoding and only the address selected at S."""
     if opcode > 0x0F:
         raise ValueError(f"reserved opcode {opcode:#04x} at PC {pc}")
     if opcode == 0x00:
         if operand:
             raise ValueError(f"nonzero HALT operand at PC {pc}")
-        return
-    if opcode == 0x06:
-        limit = 0x3F
-    elif opcode == 0x07:
-        limit = 0
-    else:
-        limit = 0xFF
-    if operand > limit:
+        return pc
+
+    # Largest legal operand for each opcode, in the §3 table order.
+    limits = (0, 255, 255, 255, 255, 255, 63, 0, 15, 15, 1023, 255, 255, 0, 0, 255)
+    if operand > limits[opcode]:
         raise ValueError(f"reserved operand bits at PC {pc}")
-    if pc + 1 >= words:
+    address = pc + 1  # May reach 256. Check before narrowing to an 8-bit address.
+    if opcode == 0x0A:
+        conditions = (True, wait_result == "OK", wait_result == "TIMEOUT", lc == 0)
+        if conditions[operand >> 8]:
+            address = operand & 0xFF
+    elif opcode == 0x0C and lc > 1:  # DJNZ branches on the decremented LC.
+        address = operand
+    if address >= words:
         raise ValueError(f"next PC outside image at PC {pc}")
+    return address
 
 
-def trace_timed(
+def _initial_fifo(items: Iterable[int]) -> deque[int]:
+    fifo = deque()
+    for item in items:
+        if len(fifo) == 4:
+            raise ValueError("FIFO initial contents exceed depth 4")
+        fifo.append(_byte(item))
+    return fifo
+
+
+def trace_engine(
     image: bytes, uio_in: Iterable[int] = (), *,
     pre_run: Iterable[int] = (), stop_at: int | None = None,
-) -> Iterator[TimedEdge]:
-    """Yield K and each following edge, with raw input sampled once per edge.
+    tx_initial: Iterable[int] = (), rx_initial: Iterable[int] = (),
+    host_tx: Mapping[int, int] | None = None, host_rx: Iterable[int] = (),
+) -> Iterator[EngineStep]:
+    """Run a loaded image until HALT, an engine fault, or an accepted STOP.
 
-    pre_run gives prior raw samples in chronological order. Exhausted input holds
-    its last value (initially zero). stop_at is an accepted STOP at tick K+n, n>0.
+    K is tick zero. Supply one raw pin byte per rising edge. pre_run holds older
+    samples in time order. Exhausted input holds its last value (initially zero).
+    Initial FIFO bytes are oldest first. host_tx maps ticks to host write bytes;
+    host_rx lists read request ticks. Both are finite transaction-level stimuli.
+    They bypass the nibble loader. stop_at is an accepted STOP at K+n, n>0.
     """
     if not isinstance(image, bytes):
         raise TypeError("expected program payload as bytes")
@@ -108,23 +148,43 @@ def trace_timed(
         raise ValueError("expected 1 to 256 complete 16-bit words")
     if stop_at is not None and (type(stop_at) is not int or stop_at <= 0):
         raise ValueError("stop_at must be a positive integer tick after K")
+    tx = _initial_fifo(tx_initial)
+    rx = _initial_fifo(rx_initial)
+    writes = {tick: _byte(value) for tick, value in (host_tx or {}).items()}
+    reads = set(host_rx)
+    if any(type(tick) is not int or tick < 0 for tick in writes.keys() | reads):
+        raise ValueError("host transaction ticks must be nonnegative integers")
 
     pc = data = oe = 0
-    prepared_data = prepared_oe = timer = 0
+    prepared_data = prepared_oe = timer = lc = osr = isr = 0
     wait_result = "NONE"
     phase = "run"
 
-    def observe(*, running=True, fetch=False, exec_start=False, retire=False):
+    def observe(*, running=True, fetch=False, exec_start=False, retire=False, fault_reason=None):
         edge = Edge(pc, data, oe, running, fetch, exec_start, retire)
-        return TimedEdge(edge, wait_result)
+        return EngineStep(edge, wait_result, lc, osr, isr, len(tx), len(rx),
+                          tx_pop, rx_push, host_tx_ok, host_rx_ok, host_rx_data, fault_reason)
 
     for tick, (sample, previous) in enumerate(_synchronized_inputs(uio_in, pre_run)):
-        if tick == stop_at:
+        tx_pop = rx_push = host_tx_ok = host_rx_ok = False
+        host_rx_data = None
+        if tick == stop_at:  # §6: STOP suppresses same-edge engine effects.
             pc = data = oe = 0
-            prepared_data = prepared_oe = timer = 0
+            prepared_data = prepared_oe = timer = lc = osr = isr = 0
             wait_result = "NONE"
+            tx.clear()
+            rx.clear()
             yield observe(running=False)
             return
+
+        # §5: both sides decide from the old counts, including full and empty.
+        tx_count_before, rx_count_before = len(tx), len(rx)
+        host_tx_ok = tick in writes and tx_count_before < 4
+        host_rx_ok = tick in reads and rx_count_before > 0
+        if host_tx_ok:
+            tx.append(writes[tick])
+        if host_rx_ok:
+            host_rx_data = rx.popleft()
 
         if phase == "run":  # K
             phase = "fetch"
@@ -138,9 +198,14 @@ def trace_timed(
             yield observe(fetch=True)
             continue
 
-        start = phase == "start"  # Pulses once at S, even when R comes later.
+        start = phase == "start"  # One S pulse even if R comes later.
         if start:
-            _check_instruction(opcode, operand, pc, len(image) // 2)
+            try:
+                next_pc = _next_pc(opcode, operand, pc, len(image) // 2, wait_result, lc)
+            except ValueError as error:
+                oe = 0
+                yield observe(running=False, exec_start=True, fault_reason=str(error))
+                return
             remaining = timer
 
         retire = True
@@ -168,18 +233,60 @@ def trace_timed(
                 retire = False
         elif opcode == 0x07:  # DELAY
             retire = remaining == 0
+        elif opcode == 0x08:  # SHIN
+            # Earliest S=K+2 already sees the raw input from K.
+            assert sample is not None
+            bit = (sample >> (operand & 7)) & 1
+            if operand & 8:
+                isr = (isr >> 1) | (bit << 7)
+            else:
+                isr = ((isr << 1) | bit) & 0xFF
+        elif opcode == 0x09:  # SHOUT updates the active and staged data bit together.
+            mask = 1 << (operand & 7)
+            if operand & 8:
+                bit, osr = osr & 1, osr >> 1
+            else:
+                bit, osr = osr >> 7, (osr << 1) & 0xFF
+            data = (data & ~mask) | (mask if bit else 0)
+            prepared_data = (prepared_data & ~mask) | (mask if bit else 0)
+        # BR only changes next_pc, already selected at S.
+        elif opcode == 0x0B:  # LSET
+            lc = operand
+        elif opcode == 0x0C:  # DJNZ
+            lc = max(0, lc - 1)
+        elif opcode == 0x0D:  # PUSH
+            rx_push = retire = rx_count_before < 4
+            if rx_push:
+                rx.append(isr)
+        elif opcode == 0x0E:  # PULL
+            tx_pop = retire = tx_count_before > 0
+            if tx_pop:
+                osr = tx.popleft()
+        elif opcode == 0x0F:  # SRIMM
+            osr = operand
 
         if retire:
-            pc += 1
+            pc = next_pc
             phase = "fetch"
         else:
-            if remaining:
+            if remaining and opcode in (0x06, 0x07):
                 remaining -= 1
             phase = "retry"
         yield observe(exec_start=start, retire=retire)
 
 
+def trace_timed(
+    image: bytes, uio_in: Iterable[int] = (), *,
+    pre_run: Iterable[int] = (), stop_at: int | None = None,
+) -> Iterator[TimedEdge]:
+    """Project the original timed view, raising ValueError on an engine fault."""
+    for step in trace_engine(image, uio_in, pre_run=pre_run, stop_at=stop_at):
+        if step.fault:
+            raise ValueError(step.fault_reason)
+        yield TimedEdge(step.edge, step.wait_result)
+
+
 def trace_run(image: bytes) -> Iterator[Edge]:
-    """Yield just the original seven fields of each edge from K through HALT."""
+    """Yield the original seven edge fields from K through HALT."""
     for timed in trace_timed(image):
         yield timed.edge

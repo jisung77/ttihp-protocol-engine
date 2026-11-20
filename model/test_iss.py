@@ -1,3 +1,5 @@
+from itertools import islice
+
 import pytest
 
 from model.iss import trace_run
@@ -30,9 +32,13 @@ def test_partial_commit_preserves_unmasked_data_and_oe():
     ]
 
 
-def test_branch_is_legal_but_outside_this_model():
-    with pytest.raises(NotImplementedError, match="opcode 0x0a"):
-        list(trace_run(bytes.fromhex("00 50  00 00")))
+def test_absolute_branch_skips_pin_program():
+    # BR 2, DATA 0xff (skipped), HALT. The first retire selects word 2.
+    image = bytes.fromhex("02 50  FF 08  00 00")
+    retired = [edge for edge in islice(trace_run(image), 7) if edge.retire]
+    assert [(e.pc, e.uio_out, e.running) for e in retired] == [
+        (2, 0, True), (2, 0, False)
+    ]
 
 
 @pytest.mark.parametrize(
