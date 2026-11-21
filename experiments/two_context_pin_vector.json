@@ -1,0 +1,178 @@
+{
+  "input_commit": "d27a2592d16f156b7ae0f16a2ff42825e53a9cb5",
+  "official_gate_run": "https://github.com/jisung77/ttihp-protocol-engine/actions/runs/44863887949",
+  "netlist_sha256": "bedf9151ca2489f89f1255c5a9565ffc803368eba4049ede829c66a6291f5022",
+  "edge_origin": "E1=1, first active rising edge after reset",
+  "aligned": {
+    "programs": {
+      "a": {
+        "words": [
+          "2006",
+          "3800",
+          "0810",
+          "1010",
+          "1810",
+          "0000"
+        ],
+        "checksum": "8836",
+        "loader_frames": [
+          "01 06 00",
+          "02 06 20",
+          "02 00 38",
+          "02 10 08",
+          "02 10 10",
+          "02 10 18",
+          "02 00 00",
+          "03 36 88"
+        ]
+      },
+      "b": {
+        "words": [
+          "0801",
+          "1001",
+          "1801",
+          "0000"
+        ],
+        "checksum": "3003",
+        "loader_frames": [
+          "01 04 00",
+          "02 01 08",
+          "02 01 10",
+          "02 01 18",
+          "02 00 00",
+          "03 03 30"
+        ]
+      }
+    },
+    "run_a": 349,
+    "run_b": 358,
+    "source": "masked separate legacy runs, aligned by RUN acceptance",
+    "expected": [
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        0
+      ],
+      [
+        1,
+        1
+      ],
+      [
+        17,
+        17
+      ],
+      [
+        17,
+        16
+      ],
+      [
+        17,
+        0
+      ],
+      [
+        17,
+        0
+      ],
+      [
+        17,
+        0
+      ]
+    ],
+    "first_negative_difference": 6
+  },
+  "opposite": {
+    "a_words": [
+      "2005",
+      "3800",
+      "0810",
+      "1010",
+      "1810",
+      "0000"
+    ],
+    "b_words": [
+      "0801",
+      "1001",
+      "2001",
+      "3016",
+      "5206",
+      "1801",
+      "0000"
+    ],
+    "scope": "Measured ACK spacing on single-context RTL and its official netlist. Dual pin samples are expected values only.",
+    "observed": {
+      "edge_origin": "E1=1",
+      "run_a": 174,
+      "run_b_ack": 181,
+      "run_b_single_rc": 2
+    }
+  },
+  "raw_sha256": {
+    "results/vectors/witness-rtl.json": "1cd2b5d0fc1046dc919c10b64fe5e06c145ab8de8a58159a8983f7e4dec9f693",
+    "results/vectors/witness-gls.json": "1cd2b5d0fc1046dc919c10b64fe5e06c145ab8de8a58159a8983f7e4dec9f693",
+    "results/vectors/witness-rtl.xml": "a3e63f5cd85e3cf160f175751cf323fa88852a4abd96af12f6e5205ff99ab67e",
+    "witness-gate/out/gls.xml": "f8d5b5da76e0cd2916b0ff310a9339a94dd296ea5e1c86e9f8ea53f9df204378",
+    "logs/witness.log": "a3fc69851283ea1c9814ef0d6c1328f1f305849f0791c9d888539f397cf73567",
+    "witness-gate/out/gls.log": "63cdde2da65fb9fc656f01dda159eb1403911bceafb3a2e48f8456742ac2bf5b",
+    "fast/rtl.xml": "54d1eaa9d63259a726294a299fec7097051ad5eb2ae71437a5e288194101b6f2",
+    "fast/rtl.log": "40bdc0de8f6a9b95b9798734d4465bc20de7283e68d6d7a59e7b1cb9bb469199",
+    "fast/gate/gls.xml": "a1104203ca9ecaa5268165b901c6be109aa73a305fb6527bab1aad496fd763fc",
+    "fast/gate/gls.log": "bb8d6be1f2aa75905b45b19044575620c439748857804bdd65287a5067e8fe38",
+    "fast/spacing-rtl.json": "c9b3cd60988e5a5efe6e0d45e80359266ed6d5e1a4f518f081ccba337b8b4ac7",
+    "fast/spacing-gls.json": "c9b3cd60988e5a5efe6e0d45e80359266ed6d5e1a4f518f081ccba337b8b4ac7"
+  }
+}
