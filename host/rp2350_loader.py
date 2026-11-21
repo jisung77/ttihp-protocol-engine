@@ -10,6 +10,7 @@ class Loader:
 
     def reset(self):
         """Start a new session. Board must have a running project clock >= 100 kHz."""
+        self.synced = False
         b = self.board
         b.uio_oe_pico.value = 0
         b.reset_project(True)
@@ -18,9 +19,9 @@ class Loader:
         time.sleep_us(50)
         b.reset_project(False)
         time.sleep_us(50)
-        self.synced = (int(b.uo_out.value) == 0)
-        if not self.synced:
+        if int(b.uo_out.value) != 0:
             raise RuntimeError("reset did not clear ACK/status")
+        self.synced = True
 
     def _nibble(self, data):
         if not self.synced:
@@ -47,17 +48,30 @@ class Loader:
             status = self._nibble(b & 15)
         return status
 
-    def _ok(self, cmd, payload=b""):
-        status = self._command(cmd, payload)
+    def _frame(self, cmd, payload=b"", reply=False):
+        # An interrupted command or reply leaves the receiver at an unknown nibble.
+        if not self.synced:
+            raise RuntimeError("reset the loader session first")
+        try:
+            status = self._command(cmd, payload)
+            if reply and status == 0:
+                return status, self._reply()
+            return status, None
+        except BaseException:
+            self.synced = False
+            raise
+
+    def _ok(self, cmd, payload=b"", reply=False):
+        status, data = self._frame(cmd, payload, reply)
         if status:
             raise RuntimeError("command %02x returned %d" % (cmd, status))
+        return data
 
     def _reply(self):
         return (self._nibble(0) << 4) | self._nibble(0)
 
     def status(self):
-        self._ok(0)
-        return self._reply()
+        return self._ok(0, reply=True)
 
     def stop(self):
         self._ok(5)
@@ -80,15 +94,15 @@ class Loader:
         self._ok(4)
 
     def try_send(self, value):
-        status = self._command(6, bytes([value]))
+        status = self._frame(6, bytes([value]))[0]
         if status > 1:
             raise RuntimeError("TX returned %d" % status)
         return status == 0
 
     def try_receive(self):
-        status = self._command(7)
+        status, data = self._frame(7, reply=True)
         if status == 1:
             return None
         if status:
             raise RuntimeError("RX returned %d" % status)
-        return self._reply()
+        return data
