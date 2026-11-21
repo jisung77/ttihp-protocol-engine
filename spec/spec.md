@@ -142,6 +142,8 @@ TX·RX는 각각 깊이 4의 바이트 FIFO다. 읽기·쓰기 허가는 에지 
 
 [추론] RTL 비교 경계는 dual_mode, exec_start_a/b, retire_a/b, pc_a/b[7:0], tx_pop_a/b, rx_push_a/b, tx_count_a/b[2:0], rx_count_a/b[2:0], fetch_valid, fetch_ctx, sram_addr[7:0], sram_we, instruction[15:0], instr_ctx, instr_valid다. a/b 표기는 _a와 _b 두 신호를 뜻한다. fetch_valid는 승인한 인출의 펄스, instr_valid는 소비 가능한 태그된 응답의 펄스다. 각각의 valid가 0일 때 그 ID를 비교하지 않는다. SRAM 쓰기 주소는 sram_we에서만, 읽기 주소는 fetch_valid에서만 비교한다. v0.1 §2의 단독 관측 이름과 의미도 유지한다. 두 컨텍스트가 같은 에지에 은퇴하면 실패다. GLS는 호스트 응답·출력·OE만으로 판정한다. 아래 벡터 K는 A의 RUN 수락 에지이고 홀수다. B의 RUN은 K+9(짝수)에 수락한다. A는 TLO 6, DELAY, DATA 0x10, OE 0x10, COMMIT 0x10, HALT이고 B는 v0.1 §7의 네 워드다. 각각의 워드 합은 0x8836과 0x3003이다.
 
+듀얼 검증에서는 F 직후 fetch_valid/fetch_ctx/sram_addr가 F에서 수락한 읽기를, 쓰기 직후 sram_we/sram_addr가 그 에지에서 수락한 쓰기를 나타낸다. F+1 직후 instr_valid/instr_ctx/instruction은 그 에지에서 명령을 처음 실행한 대상과 워드다. 같은 F+1에 상대의 다음 인출이 수락되어도 이 세 관측값은 방금 실행한 명령에 대응한다. STOP으로 취소된 응답과 이미 시작한 명령의 재시도에는 instr_valid=0이다. 인코딩이나 주소 검사에서 fault가 나는 첫 실행은 S에 포함한다. 단독 모드의 기존 instruction 관측은 §2를 따른다.
+
 | K 이후 에지 | 0–14 | 15 | 16 | 17 | 18–20 |
 |---|---|---|---|---|---|
 | uio_out | 00 | 01 | 11 | 11 | 11 |
