@@ -6,6 +6,7 @@
 sby -j 3 pe_fifo.sby
 sby pe_engine.sby
 sby pe_opcode.sby
+sby pe_dual.sby slots ownership mode_cover
 ```
 
 ## FIFO
@@ -26,17 +27,21 @@ sby pe_opcode.sby
 
 마지막 witness는 깊이 4의 저장 공간을 두 차례 순환하는 트래픽이다. 공개 인터페이스로 관찰 가능한 전송에 대한 결과다.
 
-## 엔진
+## 단독 엔진
 
-`safety`는 최초 한 에지에 reset 또는 deselect를 가정한다. 이후 호스트와 프로토콜 입력, 선택, 리셋은 자유롭다. TT 핀과 §2의 pc, retire, tx_count, rx_count만 관측한다. 프로그램 SRAM의 반환값은 매 클록 임의의 16비트 값으로 허용한다. 이 확대된 입력에서도 다음 안전 속성이 무한 PDR로 성립한다.
+[실행 확인] §9.1의 단독 동작을 검증할 때 `pe_engine_formal`과 `pe_opcode_formal`은 E1~E3에 안정된 일곱 단독 strap 중 하나를 가정한다. E3 이후 ui[7:5]에는 이 제한이 없다. 같은 RTL에 각 strap으로 §7 프로그램을 적재했을 때 일곱 경우 모두 K+6에 구동하고 K+8에 해제했다.
+
+[실행 확인] 기존 단독 속성 `!running → uio_oe == 0`은 듀얼에서 그대로 사용할 수 없다. 예를 들어 한 컨텍스트의 COMMIT이 출력 소유권을 위반한 뒤 그 대상을 STATUS로 선택하면 FAULT=1, RUNNING=0, READY=1이다. 상대가 계속 실행 중이므로 핀 OE는 0x01 또는 0x10이다. 단독 strap 범위에서 원래 안전성·opcode assertions를 그대로 증명하고 듀얼은 §9.5의 개별 관측값으로 검사한다.
+
+`safety`는 최초 한 에지에 reset 또는 deselect를 가정한다. 위의 부트 strap 조건을 제외하면 호스트와 프로토콜 입력, 선택, 리셋은 자유롭다. TT 핀과 §2의 pc, retire, tx_count, rx_count만 관측한다. 프로그램 SRAM의 반환값은 매 클록 임의의 16비트 값으로 허용한다. 이 확대된 입력에서도 다음 안전 속성이 무한 PDR로 성립한다.
 
 - reset·deselect 및 두 해제 에지 동안 외부 응답·출력·OE, PC, retire와 FIFO 점유가 0이다. 각 큐의 점유량은 항상 4 이하다.
 - 정지 상태의 OE는 0이다. RUNNING이면 READY이며 FAULT가 0이다. FAULT이면 정지 상태이며 OE와 retire가 0이다.
 - RUN 시작 상태는 PC=0, OE=0이다. 연속 실행 중 은퇴하지 않은 에지에서는 PC와 OE를 유지한다. FAULT가 처음 올라오는 에지에서는 PC를 유지하고 은퇴하지 않는다.
 
-`bounds`는 호스트가 reset 해제 중 REQ=0을 유지하고 ACK 전까지 REQ와 니블을 유지하는 조건에서, 실제 동기 SRAM 모델(`PE_SIM_SRAM`)과 외부 ACK의 독립 프레임 해석을 사용한다. 기본 실행은 safety만 수행한다. 진단은 `sby pe_engine.sby bounds`로 따로 실행한다. 성공한 BEGIN의 길이를 기록하여 RUNNING인 모든 에지에 `pc < length <= 256`을 검사한다. [실행 확인] 이 작업은 240초 제한에서 TIMEOUT(rc=8)으로 종료했다. PC 안정성·fault 전이의 PASS와 구분하며, 임의 길이 이미지에 대한 PC 범위는 미증명이다.
+`bounds`는 호스트가 reset 해제 중 REQ=0을 유지하고 ACK 전까지 REQ와 니블을 유지하는 조건에서, 실제 동기 SRAM 모델(`PE_SIM_SRAM`)과 외부 ACK의 독립 프레임 해석을 사용한다. 기본 실행은 safety만 수행한다. 진단은 `sby pe_engine.sby bounds`로 따로 실행한다. 성공한 BEGIN의 길이를 기록하여 RUNNING인 모든 에지에 `pc < length <= 256`을 검사한다. [실행 확인] 이 작업은 240초 제한에서 TIMEOUT(rc=8)으로 종료했다. PC 안정성·fault 전이의 PASS와 구분하며, 임의 길이 이미지에 대한 PC 범위는 미증명이다. v0.2 단독 모드에서도 240초에 같은 판정을 얻었다. 별도 실제 로더·행동 SRAM 시뮬레이션으로 길이 1~256의 마지막 주소에서 순차 명령이 fault하는 256경우와 길이 1~255에서 정확히 length로 분기할 때 fault하는 255경우를 확인했다.
 
-`pe_opcode.sby`는 프로그램 SRAM의 등록 출력 `instruction[15:0]`(pe_sram.dout → pe_core.instruction)을 관찰한다. SRAM 저장 배열의 원시 읽기 값만 임의화하고 실제 동기 읽기·보존 회로를 유지한다. 최초 한 에지의 reset 또는 deselect를 제외한 입력은 자유롭다. S 직전 인출 워드의 opcode를 저장하여 stall 후 R까지 추적한다. 명령 해석이 정확하다는 가정은 없다.
+`pe_opcode.sby`는 프로그램 SRAM의 등록 출력 `instruction[15:0]`(pe_sram.dout → pe_core.instruction)을 관찰한다. SRAM 저장 배열의 원시 읽기 값만 임의화하고 실제 동기 읽기·보존 회로를 유지한다. 최초 한 에지에 reset 또는 deselect를 가정하며 E1~E3에는 위의 단독 strap 조건을 사용한다. 다른 입력은 자유롭다. S 직전 인출 워드의 opcode를 저장하여 stall 후 R까지 추적한다. 명령 해석이 정확하다는 가정은 없다.
 
 - [실행 확인] 연속 RUNNING 중 미은퇴 에지에서 PC는 유지된다. 은퇴한 opcode가 BR·DJNZ 이외이면 다음 PC는 9비트로 계산한 이전 PC+1과 일치한다. 255에서 0으로의 순차 래핑도 검출 대상이다.
 - [실행 확인] 연속 RUNNING 중 OE가 바뀌면 그 에지에서 COMMIT이 은퇴한다. RUN 시작과 정지 시 OE는 0이다. 실행 종료 시 PC는 유지되거나 0으로 초기화된다. fault 시 PC 보존과 retire 금지는 별도 safety 작업에서 확인했다.
@@ -44,6 +49,17 @@ sby pe_opcode.sby
 [미실행] SRAM 매크로의 물리 타이밍, 클록 에지 사이의 아날로그 글리치, 개별 opcode가 생성하는 모든 정상 출력은 이 증명의 범위 밖이다. 각 분기에 지정된 목적지와 분기 조건의 정확성은 별도 ISA 검증 항목이다.
 
 실행 당시 Git 기준점, 정확한 입력 SHA-256, 명령·버전, 원본 로그·판정·VCD는 `D:\TinyTapeout\evidence\engine-mvp-1795190317902\formal\`의 `*-inputs.txt`, `run-*.sh`, `fifo_*/PASS`, `engine_exact_safety/PASS`, `opcode/PASS`, `engine_exact_bounds/status`에 있다. 실행 당시 체크아웃의 미커밋 입력은 기록한 SHA-256으로 식별한다.
+
+## 듀얼 엔진
+
+[실행 확인] `pe_dual.sby slots`와 `ownership`의 무한 깊이 PDR가 통과했다. 전자는 슬롯 소유자·은퇴 상호배제·SRAM 태그 전달, 후자는 무권한 COMMIT·SHOUT에서 대상 OE 해제와 상대 핀 보존을 검사한다. 규범상의 공유 포트 관측값만 노출하며, 원시 SRAM 저장 배열은 비결정적인 데이터로 대체한다. `mode_cover`는 Z3에서 E3 뒤 듀얼 모드를 5스텝에 도달했다. [형식 속성](pe_dual_formal.sv)
+
+[실행 확인] 같은 파일의 Icarus witness는 원래 행동 SRAM에 프로그램 두 개를 BEGIN/WRITE/END/RUN으로 적재한다. A/B × 위반 명령 2종의 네 경우에 두 대상 모두 인출·은퇴했고, fault 직전 양쪽 핀 구동과 직후 대상 OE만 해제되는 것을 확인했다. 아래 명령은 `formal/`에서 실행한다.
+
+```sh
+iverilog -g2012 -DPE_SIM_SRAM -DPE_DUAL_PIN_WITNESS -s pe_dual_pin_witness -o /tmp/dual-witness.vvp pe_dual_formal.sv ../src/*.v
+vvp /tmp/dual-witness.vvp
+```
 
 ## 사람이 직접 확인할 지점
 

@@ -22,6 +22,23 @@ host.run()
 
 [추론] ACK 만료, 전송 중 Ctrl-C 또는 GPIO 오류가 발생하면 원래 명령을 재시도하기 전에 `host.reset()`을 호출한다. 리셋 성공 후 프로그램을 처음부터 `load()`한 다음 `run()`한다. 중간에 늦은 ACK를 받아도 프레임의 위치는 확정할 수 없다. 마지막 ACK를 읽다 중단했다면 대상이 이미 바이트를 받았을 수 있으므로 전송 성공 여부를 미확정으로 취급한다. [로더 프레임 및 리셋 규칙](../spec/spec.md#s6)
 
+## 두 이미지 적재
+
+[실행 확인] 아래 순서를 드라이버와 핀 모델로 검사했다. 듀얼 모드에서는 두 이미지를 모두 적재한 뒤 실행한다. `target=0`은 상위 네 핀을 구동하는 A, `target=1`은 하위 네 핀을 구동하는 B다. 리셋 또는 선택 해제 뒤에는 두 이미지를 다시 적재한다. PC에서 `python experiments/two_context/verify_v02.py dual-demo`를 실행하면 `dual-demo/images/`에 아래 두 바이너리와 사람이 읽을 수 있는 어셈블리가 생성된다. [호스트 핀 회귀](../model/test_v02_board_loader.py)
+
+```python
+host = Loader(tt, dual=True)
+host.reset()
+with open("uart_pin4.bin", "rb") as program:
+    host.load(program.read(), target=0)
+with open("spi0_tuned.bin", "rb") as program:
+    host.load(program.read(), target=1)
+assert host.try_send(0x55, target=0)
+assert host.try_send(0x96, target=1)
+host.run(target=0)
+host.run(target=1)
+```
+
 ## 사람이 직접 확인할 지점
 
 - 로드 직후 `host.status() & 4`가 4인지 확인한다.

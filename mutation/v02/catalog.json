@@ -1,0 +1,107 @@
+[
+  {
+    "id": "M01",
+    "file": "project.v",
+    "clause": "\u00a79.1/\u00a79.5",
+    "old": "instr_ctx <= fetch_ctx;",
+    "new": "instr_ctx <= fetch_id;"
+  },
+  {
+    "id": "M02",
+    "file": "pe_core.v",
+    "clause": "\u00a79.3",
+    "old": "|| ph_hold[m]);",
+    "new": "|| (ph_hold[m] && exec_slot[m]));"
+  },
+  {
+    "id": "M03",
+    "file": "pe_core.v",
+    "clause": "\u00a79.2",
+    "old": "if (stop[k] || run_req[k])",
+    "new": "if ((|stop) || run_req[k])"
+  },
+  {
+    "id": "M04",
+    "file": "pe_core.v",
+    "clause": "\u00a79.2",
+    "old": "{fetch_id, fetch_pc[6:0]}",
+    "new": "{1'b0, fetch_pc[6:0]}"
+  },
+  {
+    "id": "M05",
+    "file": "pe_core.v",
+    "clause": "\u00a79.2",
+    "old": "op == SHOUT && !own_e[pin]",
+    "new": "op == SHOUT && 1'b0"
+  },
+  {
+    "id": "M06",
+    "file": "pe_core.v",
+    "clause": "\u00a73/\u00a79.2",
+    "old": "next_pc >= len_e",
+    "new": "next_pc > len_e"
+  },
+  {
+    "id": "M07",
+    "file": "pe_core.v",
+    "clause": "\u00a79.3",
+    "old": "dec_ok_r[k] <= mon_match[k];",
+    "new": "dec_ok_r[k] <= 1'b0;"
+  },
+  {
+    "id": "M08",
+    "file": "pe_host.v",
+    "clause": "\u00a79.4",
+    "old": "if (mismatch_now) code = BAD;",
+    "new": "if (1'b0) code = BAD;"
+  },
+  {
+    "id": "M09",
+    "file": "pe_host.v",
+    "clause": "\u00a79.4",
+    "old": "code == BAD && !mismatch_now",
+    "new": "code == BAD"
+  },
+  {
+    "id": "M10",
+    "file": "pe_host.v",
+    "clause": "\u00a79.4",
+    "old": "if (dual_mode && load_any)",
+    "new": "if (dual_mode && load_t)"
+  },
+  {
+    "id": "M11",
+    "file": "pe_host.v",
+    "clause": "\u00a79.2/\u00a79.4",
+    "old": "{target, words[6:0]}",
+    "new": "{1'b0, words[6:0]}"
+  },
+  {
+    "id": "M12",
+    "file": "pe_host.v",
+    "clause": "\u00a76/\u00a79.4",
+    "old": "words != len_t || write_data != checksum",
+    "new": "words != len_t"
+  },
+  {
+    "id": "M13",
+    "file": "project.v",
+    "clause": "\u00a79.1",
+    "old": "dual_mode <= (mode_sync == 3'b001);",
+    "new": "dual_mode <= mode_sync[0];"
+  },
+  {
+    "id": "M14",
+    "file": "project.v",
+    "clause": "\u00a79.4",
+    "old": "{fault[target], running[target], ready[target], ack, reply}",
+    "new": "{fault[0], running[0], ready[0], ack, reply}"
+  },
+  {
+    "id": "M15",
+    "file": "pe_core.v",
+    "clause": "\u00a79.2",
+    "old": "{adata_r[7:4], adata_r[11:8]}",
+    "new": "{adata_r[7:4], adata_r[3:0]}"
+  }
+]

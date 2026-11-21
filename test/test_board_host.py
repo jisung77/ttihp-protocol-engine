@@ -106,7 +106,7 @@ def _stop(task):
         task.cancel()
 
 
-async def _handshake(dut, period_ns, st):
+async def _handshake(dut, period_ns, st, dual=False):
     """Strict REQ(ui_in[4])/ACK(uo_out[4]) oracle. Disarmed until a rst_n 0->1 edge and whenever
     rst_n != 1 (pending REQ discarded); baseline taken at the first resolvable event after."""
     rst_prev, armed, want = _bits(dut.rst_n), False, False
@@ -124,6 +124,7 @@ async def _handshake(dut, period_ns, st):
         if not armed:
             if want and ui is not None and uo is not None:
                 req, ack, data, armed, want = (ui >> 4) & 1, (uo >> 4) & 1, ui & 15, True, False
+                last_target = (ui >> 6) & 1
                 if req or ack:                       # §6: REQ=0 held through release, ACK cleared
                     st.violations.append(f"{now} ns: armed with REQ={req} ACK={ack}")
             continue
@@ -131,7 +132,11 @@ async def _handshake(dut, period_ns, st):
             st.violations.append(f"{now} ns: X/Z ui_in={dut.ui_in.value} uo_out={dut.uo_out.value}")
             continue
         r, a = (ui >> 4) & 1, (uo >> 4) & 1
-        if ui >> 5:                                  # §1: host drives ui_in[7:5]=0
+        target = (ui >> 6) & 1
+        if dual and target != last_target and (r != req or st.pend is not None):
+            st.violations.append(f"{now} ns: dual target changed at REQ or before ACK")
+        last_target = target
+        if (ui >> 5) not in ((0, 1, 2) if dual else (0,)):
             st.violations.append(f"{now} ns: ui_in[7:5]={ui >> 5}")
         if (ui & 15) != data and (r != req or st.pend is not None):  # §6 nibble stable
             st.violations.append(f"{now} ns: nibble {data:x}->{ui & 15:x} with REQ toggle/pending")
@@ -217,7 +222,7 @@ async def run_and_check(dut, host, period_ns, expected, pin0, final_status=True)
         assert await call(host.status) == TX_ROOM | READY  # §6 HALT keeps image, empty FIFOs
 
 
-async def _harness(dut, period_ns, nibbles, body):
+async def _harness(dut, period_ns, nibbles, body, dual=False):
     """Same pin defaults as host_driver.Host.reset; the clock runs before Loader.reset()."""
     for name, v in (("clk", 0), ("ena", 1), ("rst_n", 1), ("ui_in", 0), ("uio_in", 0),
                     ("uart_rx", 1), ("spi_miso", 0), ("serial_inputs", 0)):
@@ -228,8 +233,8 @@ async def _harness(dut, period_ns, nibbles, body):
     board, saved = SimBoard(dut), rp2350_loader.time
     rp2350_loader.time = SIM_TIME
     try:
-        hs = cocotb.start_soon(_handshake(dut, period_ns, st))
-        await body(rp2350_loader.Loader(board))
+        hs = cocotb.start_soon(_handshake(dut, period_ns, st, dual))
+        await body(rp2350_loader.Loader(board, dual=True) if dual else rp2350_loader.Loader(board))
         _stop(hs)
     finally:
         rp2350_loader.time = saved
@@ -258,3 +263,29 @@ async def production_loader_recovers_interrupted_frame(dut, period_ns):
         await call(host.load, IMAGE)
         await run_and_check(dut, host, period_ns, SECTION7, 1)
     await _harness(dut, period_ns, NIBBLES_B, body)
+
+
+@cocotb.test(timeout_time=50, timeout_unit="ms")
+async def production_loader_dual_images_on_hdl(dut):
+    """§9.2, §9.4. Drive A and B, stop only B, then reset and recheck both."""
+    async def body(host):
+        await call(host.reset)
+        # Each image prepares its own pin, commits, and loops at local address 3.
+        await call(host.load, bytes.fromhex("10 08 10 10 10 18 03 50"))
+        await call(host.load, bytes.fromhex("01 08 01 10 01 18 03 50"), 1)
+        await call(host.run)
+        await call(host.run, 1)
+        assert await call(host.status) == TX_ROOM | READY | RUNNING
+        assert await call(host.status, 1) == TX_ROOM | READY | RUNNING
+        assert (int(dut.uio_out.value), int(dut.uio_oe.value)) == (0x11, 0x11)
+        await call(host.stop, 1)
+        assert await call(host.status) == TX_ROOM | READY | RUNNING
+        assert await call(host.status, 1) == TX_ROOM | READY
+        assert (int(dut.uio_out.value), int(dut.uio_oe.value)) == (0x10, 0x10)
+        await call(host.reset)
+        assert await call(host.status) == TX_ROOM
+        assert await call(host.status, 1) == TX_ROOM
+        assert (int(dut.uio_out.value), int(dut.uio_oe.value)) == (0, 0)
+
+    # Two 4-word loads, two RUNs, six STATUS and one STOP.
+    await _harness(dut, 1000, 2 * 40 + 2 * 2 + 6 * 4 + 2, body, dual=True)

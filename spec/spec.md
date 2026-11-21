@@ -109,7 +109,7 @@ TX·RX는 각각 깊이 4의 바이트 FIFO다. 읽기·쓰기 허가는 에지 
 
 [추론] 50 MHz 가정에서 UART TX/RX는 8N1·115200 baud(LSB 먼저), SPI 마스터는 모드 0~3·SCK 1 MHz를 우선 목표로 한다. 예제 핀은 UART TX/RX=uio[0]/[1], SPI SCK/MOSI/MISO/CS_n=uio[0]/[1]/[2]/[3]이다. UART TX 비트 폭 오차 ≤1%, RX 외부 baud −2/0/+2%와 위상 0·¼·½·¾ 클록에서 256종 정상 바이트 복구, 정지 LOW 프레임 미입큐를 검사한다. UART 위상 0은 수신 클록의 상승 에지에서 표본 채취 직후(0+)다. SPI 예제는 MSB 우선이다. CPOL이 유휴 레벨을, CPHA=0/1이 각각 선행/후행 에지를 샘플 에지로 정한다. CPHA=0의 첫 MOSI 비트는 첫 선행 에지 전에 준비한다. 나머지 비트 및 CPHA=1의 첫 비트는 해당 변경 에지부터 다음 샘플 에지 2클록 전까지 구동한다. MOSI는 샘플 에지 전후 각각 2클록 이상 안정돼야 한다. 독립 BFM은 샘플 에지의 핀값으로 복원한다. MISO도 BFM에서 샘플 에지 전후 각각 3클록 이상 안정시키고, 프로그램은 해당 비트가 동기화 2단에 보이는 구간에 SHIN을 실행한다. 반주기 25±1클록, CS setup·hold 각각 ≥25클록, 서로 다른 MOSI/MISO 바이트를 동시에 복원해야 한다.
 
-14일차 세 조건은 SRAM 포함 GDS의 공식 precheck, 독립 BFM의 UART TX 통과, 배선 후 면적 점유율 ≤40%다. 점유율은 100×(실제 엔진·FIFO·로더 표준셀과 클록 트리 면적 + SRAM 등 하드 매크로 외곽 면적)/동일 8×4 DEF·ODB 코어 사각형 면적이다. filler·tap·endcap·decap은 제외하고 매크로는 한 번 센다. 래치 대안은 SRAM 통과로 집계하지 않는다. 증거·검출률·동결 절차는 [검증 계획](../docs/verification_plan.md)에 둔다. [미실행] 실제 매크로, WNS, 면적 및 프로토콜 속도의 실측값은 아직 없다.
+14일차 세 조건은 SRAM 포함 GDS의 공식 precheck, 독립 BFM의 UART TX 통과, 배선 후 면적 점유율 ≤40%다. 점유율은 100×(실제 엔진·FIFO·로더 표준셀과 클록 트리 면적 + SRAM 등 하드 매크로 외곽 면적)/동일 8×4 DEF·ODB 코어 사각형 면적이다. filler·tap·endcap·decap은 제외하고 매크로는 한 번 센다. 래치 대안은 SRAM 통과로 집계하지 않는다. 증거·검출률·동결 절차는 [검증 계획](../docs/verification_plan.md)에 둔다. 각 커밋의 배선 후 측정값과 시험 결과는 [단독 모드 검증 보고서](../docs/verification_report.md)와 [듀얼 모드 검증 보고서](../docs/two_context_results.md)에 기록한다.
 
 <a id="s9"></a>
 ## §9. 두 컨텍스트 모드

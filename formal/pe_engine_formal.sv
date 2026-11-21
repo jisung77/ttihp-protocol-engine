@@ -16,6 +16,19 @@ module pe_engine_formal (
     reg valid = 0;
     reg [1:0] release_age = 0;
 
+    // §§1,9.1: this checker interprets uo_out[6] as the single engine's
+    // RUNNING. Select any of the seven legacy straps through E3. Upper pins
+    // are unconstrained after capture and on later host transactions.
+    reg [2:0] boot_edges = 0;
+    always @(posedge clk) begin
+        boot_edges <= active ? {boot_edges[1:0], 1'b1} : 3'b000;
+        if (active && !boot_edges[2]) begin
+            assume(ui_in[7:5] != 3'b001);
+            if (boot_edges[0])
+                assume(ui_in[7:5] == $past(ui_in[7:5]));
+        end
+    end
+
     always @(posedge clk) begin
         valid <= 1;
         if (!valid)

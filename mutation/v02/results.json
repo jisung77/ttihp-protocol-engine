@@ -1,0 +1,624 @@
+{
+  "scope": "RTL functional-SRAM simulation. Frozen directed 29 cases; only survivors advance to four seeded random pairs, six legacy core tests and eight UART/SPI mode and parity combinations. Post-freeze fault boundary test applied to both original survivors and clean RTL. Stop after a verified kill.",
+  "frozen": {
+    "valid_mutants": 15,
+    "killed": 13,
+    "fraction": "13/15",
+    "percent": 86.67
+  },
+  "augmented": {
+    "valid_mutants": 15,
+    "killed": 15,
+    "fraction": "15/15",
+    "percent": 100.0
+  },
+  "uncompilable": 0,
+  "known_equivalent": 0,
+  "timed_out": 0,
+  "clean_input_rtl_sha256": {
+    "src/pe_core.v": "da826a8e767aae781595db3e6401c952e9359c669f23b196c153eb0136006659",
+    "src/pe_fifo.v": "f419262a7b04cc822fca4f05ae3ef87b64c907a62c8f5750c684a3f5e65a1243",
+    "src/pe_host.v": "660968e34e587de7a107acfbe5f7eac9112656ad9ebe48dd0deee764ed3630e6",
+    "src/pe_sram.v": "f4048198d7b580f0eed52792945f1bbee450b8e9ba4314b335d32afa5a60f8fe",
+    "src/project.v": "0f3853a9b0a2351f83aeb34fe5b5c70b58f545db5d9387c00779d6a8b9743d79"
+  },
+  "clean": {
+    "directed": {
+      "counts": {
+        "pass": 1,
+        "fail": 0,
+        "skip": 1,
+        "error": 0
+      },
+      "tests": {
+        "dual_run_and_wait_edges": "pass",
+        "dual_uart_spi_modes": "skip"
+      },
+      "junit_sha256": "4b0ccded7d553dc6cf449026b8eae7918a6060739d767e174925d0b84a28a0f9",
+      "run_log_sha256": "099db4c8146dbf3ef79ea053e10310a2adc1794c9c515fe8623b575e56423428"
+    },
+    "random_and_legacy": {
+      "counts": {
+        "pass": 7,
+        "fail": 0,
+        "skip": 0,
+        "error": 0
+      },
+      "tests": {
+        "seeded_valid_dual_programs": "pass",
+        "first_pin_trace_and_loader_errors": "pass",
+        "selected_pc_wait_fifo_and_fault": "pass",
+        "fifo_stop_reset_and_reload": "pass",
+        "seeded_cycle_differential": "pass",
+        "branch_fifo_reset_coverage": "pass",
+        "accepted_stop_preempts_same_edge_retire": "pass"
+      },
+      "junit_sha256": "663e3c5c47e5de5ea231a95a259d7786b5863ade43ef25caa7ac15cbfbaea34b",
+      "run_log_sha256": "1e1bbaf04e4654f66cdf8cfefce8c41eba0346605ca8ed089268354f426a5bbc"
+    },
+    "uart_spi": {
+      "counts": {
+        "pass": 1,
+        "fail": 0,
+        "skip": 1,
+        "error": 0
+      },
+      "tests": {
+        "dual_run_and_wait_edges": "skip",
+        "dual_uart_spi_modes": "pass"
+      },
+      "junit_sha256": "9079e65bd7cbfaccfa127b655b6b6580c2eb4b2aef435c663bb85c7b72c245a0",
+      "run_log_sha256": "2ef9ba6778e165d8f902b8943bd723c72ff38737e554ba83f04f3af634b007e8"
+    },
+    "fault_boundaries": {
+      "counts": {
+        "pass": 1,
+        "fail": 0,
+        "skip": 0,
+        "error": 0
+      },
+      "tests": {
+        "dual_fault_isolation_and_bad_end": "pass"
+      },
+      "junit_sha256": "b834c9afbcd9a8dbe1e1a1b384d0573de5349b48f12e7ddc8e14e59c3e4e5af7",
+      "run_log_sha256": "ecf12f31f3c0a6cce751445ca4fb06322bbdae15b808eb553728d37ff922641a"
+    }
+  },
+  "formal_m05": {
+    "prior_run": "clean RTL only; not a mutant observation",
+    "rerun_after_frozen_simulation": "FAIL 2 5",
+    "simulated_score_excludes_formal": true,
+    "source_property": "formal/pe_dual_formal.sv",
+    "source_property_sha256": "8b13accfbcec40fb4422139bfe11ae1e6c0ab4232469648b5422b3a7669f74f9",
+    "clean_status": "PASS",
+    "task": "ownership",
+    "engine": "ABC PDR",
+    "constraints": 4,
+    "failing_miter_output": 0,
+    "failing_frame_zero_based": 39,
+    "frames_including_initial": 40,
+    "sby_exit": 2,
+    "configuration_delta": "added ownership: vcd_sim on for witness rendering only",
+    "original_sby_sha256": "63e6e3862d9accc579eb9b3394dbab80c3e2fcbc43857c687c551c2d25c0acc9",
+    "trace_sby_sha256": "302a5fccf3fb8d4ebc64b851c9ad2d0f9d4f3ba2ad6990cd5a2bc297a3f9af39",
+    "status_file_sha256": "02387519388d76f22c2b19639187c98145fa1f761a527b65582114449d203583",
+    "sby_log_sha256": "446096f914277d6fc887799e193a948d4b47250cb9cfed22f0320b61eaf45e0f",
+    "aig_witness_sha256": "631b458c55c22a58eeb3e9053148816661711ceef240360771e26111216cb28c",
+    "aig_model_sha256": "05325e7703c71c3049d50508f18bfc83a693f57055dc911df0a3d82a6a49092a",
+    "independent_aig_replay": "ABC testcex -a confirmed the secondary PDR counterexample; write_cex -a emitted the same bytes as the SBY trace.aiw.",
+    "aig_replay_log_sha256": "c62eb255a74d6bc34252b575ebc19842e546ccb8af3de413577bfc8d8bdbf728",
+    "counterexample_vcd_sha256": "8096aa10b1d63ab6bd417ac46f4d137c0d3f5ef5e31220a124f22c3c63b2ce0e",
+    "waveform_limit": "Yosys sim issued 129 witness-name warnings; the sim summary listed no named assertion. The validated witness is at AIG miter output 0; the VCD does not identify a failing source line.",
+    "other_witness_backends": [
+      {
+        "method": "default",
+        "exit": 16,
+        "detail": "ABC found a counterexample, then Yices witness postprocessing lacked the yices-smt2 executable."
+      },
+      {
+        "method": "z3",
+        "exit": 124,
+        "detail": "ABC found a counterexample; the bounded witness postprocessing command timed out after 110 seconds."
+      }
+    ]
+  },
+  "mutants": [
+    {
+      "id": "M01",
+      "clause": "§9.1/§9.5",
+      "changed_rtl_file_sha256": {
+        "src/project.v": "92f27582b8cf7e9051afeb62d6616c9ea1fc9d833b71130fd248f3ea4a5489d4"
+      },
+      "frozen_simulation": "killed",
+      "augmented_simulation": "killed",
+      "first_failing_case": "test_aligned_runs_and_tagged_words",
+      "first_mismatch": "E272 instr_ctx: expected 1, got 0",
+      "execution": {
+        "directed": {
+          "counts": {
+            "pass": 0,
+            "fail": 1,
+            "skip": 1,
+            "error": 0
+          },
+          "tests": {
+            "dual_run_and_wait_edges": "fail",
+            "dual_uart_spi_modes": "skip"
+          },
+          "junit_sha256": "948337e713294c07964210e252ba7f229bb56e59ba486ffe7eed8ce57d244a7b",
+          "run_log_sha256": "2b2b1570f9b77d0fc15922e0632f2caf1ada367a69514665a5f3f492628b005c"
+        }
+      }
+    },
+    {
+      "id": "M02",
+      "clause": "§9.3",
+      "changed_rtl_file_sha256": {
+        "src/pe_core.v": "360fb72180ba371ded1e199a44ea933c397104417d3a4366d666e29345da06ab"
+      },
+      "frozen_simulation": "killed",
+      "augmented_simulation": "killed",
+      "first_failing_case": "test_aligned_runs_and_tagged_words",
+      "first_mismatch": "E271 pc_a: expected 2, got 00000001",
+      "execution": {
+        "directed": {
+          "counts": {
+            "pass": 0,
+            "fail": 1,
+            "skip": 1,
+            "error": 0
+          },
+          "tests": {
+            "dual_run_and_wait_edges": "fail",
+            "dual_uart_spi_modes": "skip"
+          },
+          "junit_sha256": "9a32229bfa1fbf0772ce23aa5ff335dd0cfc65a6d022ca2ff08c8de8921b4b16",
+          "run_log_sha256": "2c3b7ce2ab8f9df8734bef9c93f913ece630c27dd2378ce26a96729d06a876c6"
+        }
+      }
+    },
+    {
+      "id": "M03",
+      "clause": "§9.2",
+      "changed_rtl_file_sha256": {
+        "src/pe_core.v": "826029b611112842709fd7e7d1adb69038040239238b4ba7a3d30b43aa090ce5"
+      },
+      "frozen_simulation": "killed",
+      "augmented_simulation": "killed",
+      "first_failing_case": "test_stop_cancels_pending_wait_only_for_target(17,)",
+      "first_mismatch": "E333 uio_out: expected 16, got 00000000",
+      "execution": {
+        "directed": {
+          "counts": {
+            "pass": 0,
+            "fail": 1,
+            "skip": 1,
+            "error": 0
+          },
+          "tests": {
+            "dual_run_and_wait_edges": "fail",
+            "dual_uart_spi_modes": "skip"
+          },
+          "junit_sha256": "278d2619d59fad1a02366476c01a22a9f8fecda28eec3b242766e4b9d2ec6cff",
+          "run_log_sha256": "4fbeb3bcc78597713656cab551a5b000b7d128a0de2009fbe533cafe43b25de7"
+        }
+      }
+    },
+    {
+      "id": "M04",
+      "clause": "§9.2",
+      "changed_rtl_file_sha256": {
+        "src/pe_core.v": "f12397e1725d339ff660e08c244190b984c8ec55a0337f5b2908ecb423e34447"
+      },
+      "frozen_simulation": "killed",
+      "augmented_simulation": "killed",
+      "first_failing_case": "test_aligned_runs_and_tagged_words",
+      "first_mismatch": "E271 sram_addr: expected 128, got 00000000",
+      "execution": {
+        "directed": {
+          "counts": {
+            "pass": 0,
+            "fail": 1,
+            "skip": 1,
+            "error": 0
+          },
+          "tests": {
+            "dual_run_and_wait_edges": "fail",
+            "dual_uart_spi_modes": "skip"
+          },
+          "junit_sha256": "c6e55393560dfd2e24a3850e46891ba3bc1a02761b0b2ae2c3225f5139d075ba",
+          "run_log_sha256": "0c618e0db074ffdae5ff5e8200d224e5a9f5a18d438d6fb01164f961e36033e9"
+        }
+      }
+    },
+    {
+      "id": "M05",
+      "clause": "§9.2",
+      "changed_rtl_file_sha256": {
+        "src/pe_core.v": "42fdfd484d92ec90e0de1a6df3737df4364d3fc2ab931e5840056c154add9848"
+      },
+      "frozen_simulation": "survived",
+      "augmented_simulation": "killed",
+      "first_failing_case": "forbidden_shout",
+      "first_mismatch": "E358 uo_out: expected 160, got 01100000",
+      "execution": {
+        "directed": {
+          "counts": {
+            "pass": 1,
+            "fail": 0,
+            "skip": 1,
+            "error": 0
+          },
+          "tests": {
+            "dual_run_and_wait_edges": "pass",
+            "dual_uart_spi_modes": "skip"
+          },
+          "junit_sha256": "d9f782eb3dcd6ffdfa82fcc0a54b08ce1d30f510f06d585cde265d4ca7baeda6",
+          "run_log_sha256": "8a7b6530a2d71749269809586c4438f39fe41cc75a90dc463db928bf5abf29fc"
+        },
+        "random_and_legacy": {
+          "counts": {
+            "pass": 7,
+            "fail": 0,
+            "skip": 0,
+            "error": 0
+          },
+          "tests": {
+            "seeded_valid_dual_programs": "pass",
+            "first_pin_trace_and_loader_errors": "pass",
+            "selected_pc_wait_fifo_and_fault": "pass",
+            "fifo_stop_reset_and_reload": "pass",
+            "seeded_cycle_differential": "pass",
+            "branch_fifo_reset_coverage": "pass",
+            "accepted_stop_preempts_same_edge_retire": "pass"
+          },
+          "junit_sha256": "c7b3b5ced21e4eba3fae1afdcc54f896e1d6987f1c8aa37b79987ce6de6ea1d7",
+          "run_log_sha256": "a879e06c94a2d565fd488f7b46879f36f17e5364be782c2fe8f5215b69c62831"
+        },
+        "uart_spi": {
+          "counts": {
+            "pass": 1,
+            "fail": 0,
+            "skip": 1,
+            "error": 0
+          },
+          "tests": {
+            "dual_run_and_wait_edges": "skip",
+            "dual_uart_spi_modes": "pass"
+          },
+          "junit_sha256": "078d254ac75c3cebac9dbb372d48f3a3ee308192e407ef6ed32447dcd4b957bf",
+          "run_log_sha256": "b7750e5abb339ea5f640b4e8e5174cbac2754fc560cf8498f3031d4e26f9ba12"
+        },
+        "fault_boundaries": {
+          "counts": {
+            "pass": 0,
+            "fail": 1,
+            "skip": 0,
+            "error": 0
+          },
+          "tests": {
+            "dual_fault_isolation_and_bad_end": "fail"
+          },
+          "junit_sha256": "1bd9edae1903c4a428d32488e829081b30e3727c1987cd715e3539066918fb8e",
+          "run_log_sha256": "26cd8a3004380d14a18bbc89a6dc17611875d61512e8fb722f18aaa77f9d08ae"
+        }
+      }
+    },
+    {
+      "id": "M06",
+      "clause": "§3/§9.2",
+      "changed_rtl_file_sha256": {
+        "src/pe_core.v": "092cd5fe1685f4fac8b97bbea9f8f55dda4bc3217eccef10e24120e826389d7e"
+      },
+      "frozen_simulation": "killed",
+      "augmented_simulation": "killed",
+      "first_failing_case": "test_bank_b_last_word_checks_full_width_address(2049, 21)",
+      "first_mismatch": "E2354 uo_out: expected 160, got 01100000",
+      "execution": {
+        "directed": {
+          "counts": {
+            "pass": 0,
+            "fail": 1,
+            "skip": 1,
+            "error": 0
+          },
+          "tests": {
+            "dual_run_and_wait_edges": "fail",
+            "dual_uart_spi_modes": "skip"
+          },
+          "junit_sha256": "2ff2d0bdf27d4c3627640be2f9f69c4a2f1172e68e3c09c231a8242c8b758274",
+          "run_log_sha256": "08e05c58da552d7282d28020972d215b7e5c9ce453de71564f606a5e488b5a00"
+        }
+      }
+    },
+    {
+      "id": "M07",
+      "clause": "§9.3",
+      "changed_rtl_file_sha256": {
+        "src/pe_core.v": "50ae644d135b40d9a3e3c01c618537fcbb203dbbe3a89e34369fb6a8019532ca"
+      },
+      "frozen_simulation": "killed",
+      "augmented_simulation": "killed",
+      "first_failing_case": "test_wait_onset_deadline_and_late_edge(17, 22)",
+      "first_mismatch": "E336 pc_b: expected 5, got 00000110",
+      "execution": {
+        "directed": {
+          "counts": {
+            "pass": 0,
+            "fail": 1,
+            "skip": 1,
+            "error": 0
+          },
+          "tests": {
+            "dual_run_and_wait_edges": "fail",
+            "dual_uart_spi_modes": "skip"
+          },
+          "junit_sha256": "a79024f0d555468a615455b3549c8a9d12127b52c44976c30f18ba575e21f05b",
+          "run_log_sha256": "14ba8c071a20e496f24e484723ef84948c4133e03b88182ca1decb4284e1ae57"
+        }
+      }
+    },
+    {
+      "id": "M08",
+      "clause": "§9.4",
+      "changed_rtl_file_sha256": {
+        "src/pe_host.v": "e4057e2e3a9b257a8b64c3430cc1b5b870b437690285bd5ab0d23de20d6205c8"
+      },
+      "frozen_simulation": "killed",
+      "augmented_simulation": "killed",
+      "first_failing_case": "test_loader_lock_mismatch_discards_frame_and_keeps_write_index",
+      "first_mismatch": "E111 uo_out: expected 35, got 00100010",
+      "execution": {
+        "directed": {
+          "counts": {
+            "pass": 0,
+            "fail": 1,
+            "skip": 1,
+            "error": 0
+          },
+          "tests": {
+            "dual_run_and_wait_edges": "fail",
+            "dual_uart_spi_modes": "skip"
+          },
+          "junit_sha256": "42bc348740afd41717f7d2d4e1668c43eda36cae3cb79b719912c118b91bab4e",
+          "run_log_sha256": "b76bc227b539ee5d89dcfb30a4acd883d97b8915c3b40170892a26d9d62e6a89"
+        }
+      }
+    },
+    {
+      "id": "M09",
+      "clause": "§9.4",
+      "changed_rtl_file_sha256": {
+        "src/pe_host.v": "382dc5767d208b5d4e3d81ca83dea95fb31d0fbcf751966497e9af81f7b9fb7e"
+      },
+      "frozen_simulation": "killed",
+      "augmented_simulation": "killed",
+      "first_failing_case": "test_loader_lock_mismatch_discards_frame_and_keeps_write_index",
+      "first_mismatch": "E111 uo_out: expected 35, got 00000011",
+      "execution": {
+        "directed": {
+          "counts": {
+            "pass": 0,
+            "fail": 1,
+            "skip": 1,
+            "error": 0
+          },
+          "tests": {
+            "dual_run_and_wait_edges": "fail",
+            "dual_uart_spi_modes": "skip"
+          },
+          "junit_sha256": "31c6bac8acd5f77b823acb00d85527a0f9414514f4d7e0d34058c47fa06c8363",
+          "run_log_sha256": "ed0ede8ac2302e0a5f74679fa114f6a5a234c0e41c76f2b70788761c1be07678"
+        }
+      }
+    },
+    {
+      "id": "M10",
+      "clause": "§9.4",
+      "changed_rtl_file_sha256": {
+        "src/pe_host.v": "b4e0f178259c3b640185ecb5df8c6ad5f15d6c5e1b284e366707b69b0669db8c"
+      },
+      "frozen_simulation": "killed",
+      "augmented_simulation": "killed",
+      "first_failing_case": "test_loader_lock_mismatch_discards_frame_and_keeps_write_index",
+      "first_mismatch": "E117 uo_out: expected 34, got 01100000",
+      "execution": {
+        "directed": {
+          "counts": {
+            "pass": 0,
+            "fail": 1,
+            "skip": 1,
+            "error": 0
+          },
+          "tests": {
+            "dual_run_and_wait_edges": "fail",
+            "dual_uart_spi_modes": "skip"
+          },
+          "junit_sha256": "e21b5ec4346b6446a2a0d800cfcf382763cf222413fee6e29a1871de2c68979e",
+          "run_log_sha256": "0cb23b132fd89b55ae02a64175e4936eff7169c2e30ce1d52cd6718da8d0e6e6"
+        }
+      }
+    },
+    {
+      "id": "M11",
+      "clause": "§9.2/§9.4",
+      "changed_rtl_file_sha256": {
+        "src/pe_host.v": "98e9cc27f1fb55e08518eeec2b75c6de321a634b59bb08618e5fef84f9767d6d"
+      },
+      "frozen_simulation": "killed",
+      "augmented_simulation": "killed",
+      "first_failing_case": "test_aligned_runs_and_tagged_words",
+      "first_mismatch": "E183 sram_addr: expected 128, got 00000000",
+      "execution": {
+        "directed": {
+          "counts": {
+            "pass": 0,
+            "fail": 1,
+            "skip": 1,
+            "error": 0
+          },
+          "tests": {
+            "dual_run_and_wait_edges": "fail",
+            "dual_uart_spi_modes": "skip"
+          },
+          "junit_sha256": "a4efded5132d8de6db830590bec9d13737d86cc664e0ad72d86a4886d2638233",
+          "run_log_sha256": "170b02cabe4df1985e06d15a128225ed992429dcb546675e52d8f3fc95de3477"
+        }
+      }
+    },
+    {
+      "id": "M12",
+      "clause": "§6/§9.4",
+      "changed_rtl_file_sha256": {
+        "src/pe_host.v": "227cf4f96d947db763bcb57633e2ca9b216f3532bb52cc970be6ef6208a185d3"
+      },
+      "frozen_simulation": "survived",
+      "augmented_simulation": "killed",
+      "first_failing_case": "wrong_checksum",
+      "first_mismatch": "E430 uo_out: expected 3, got 00100000",
+      "execution": {
+        "directed": {
+          "counts": {
+            "pass": 1,
+            "fail": 0,
+            "skip": 1,
+            "error": 0
+          },
+          "tests": {
+            "dual_run_and_wait_edges": "pass",
+            "dual_uart_spi_modes": "skip"
+          },
+          "junit_sha256": "78bae85d5c47b257eeaa29636aa52705b0b303f36d15a0d3b811d8d7ccb55885",
+          "run_log_sha256": "b3fc99f19ca1f6f8ffcee22f92b77f3c58b7110b36b84a8f9c92cee9646be7e6"
+        },
+        "random_and_legacy": {
+          "counts": {
+            "pass": 7,
+            "fail": 0,
+            "skip": 0,
+            "error": 0
+          },
+          "tests": {
+            "seeded_valid_dual_programs": "pass",
+            "first_pin_trace_and_loader_errors": "pass",
+            "selected_pc_wait_fifo_and_fault": "pass",
+            "fifo_stop_reset_and_reload": "pass",
+            "seeded_cycle_differential": "pass",
+            "branch_fifo_reset_coverage": "pass",
+            "accepted_stop_preempts_same_edge_retire": "pass"
+          },
+          "junit_sha256": "cbb2dd95b3cf07200810a0b6301fd819cc069bdd4588e07924036fec49c72992",
+          "run_log_sha256": "aad824a9769cda9ba1d9dfde8a42a11af89923eeee66a881b4d839e5319a19ca"
+        },
+        "uart_spi": {
+          "counts": {
+            "pass": 1,
+            "fail": 0,
+            "skip": 1,
+            "error": 0
+          },
+          "tests": {
+            "dual_run_and_wait_edges": "skip",
+            "dual_uart_spi_modes": "pass"
+          },
+          "junit_sha256": "cee0aa254a3557df54800b20153ef927f004a6682f336eccedb691823bf37883",
+          "run_log_sha256": "957f98c4e39fa22541a4900a27a60a975b749771246d1d404c469c1ad9b1c04e"
+        },
+        "fault_boundaries": {
+          "counts": {
+            "pass": 0,
+            "fail": 1,
+            "skip": 0,
+            "error": 0
+          },
+          "tests": {
+            "dual_fault_isolation_and_bad_end": "fail"
+          },
+          "junit_sha256": "f3979d59e84bc71ddc6b0204868f93c0ded905d807c9a88da0842a32d1faf025",
+          "run_log_sha256": "aa9bf58209abe9f9d0af9aad15c0cf480598c02aa12128aac248461869631138"
+        }
+      }
+    },
+    {
+      "id": "M13",
+      "clause": "§9.1",
+      "changed_rtl_file_sha256": {
+        "src/project.v": "2774feecfc62d2f3f860f0feb23a4dd6b0a486a079e04bce3d1a67523652f734"
+      },
+      "frozen_simulation": "killed",
+      "augmented_simulation": "killed",
+      "first_failing_case": "test_mode_latches_through_reset_release(3,)",
+      "first_mismatch": "E3 dual_mode: expected 0, got 1",
+      "execution": {
+        "directed": {
+          "counts": {
+            "pass": 0,
+            "fail": 1,
+            "skip": 1,
+            "error": 0
+          },
+          "tests": {
+            "dual_run_and_wait_edges": "fail",
+            "dual_uart_spi_modes": "skip"
+          },
+          "junit_sha256": "6bfe04caa7605b22a96082969cb34a74942b86fec07db83dfff6eedfac2b408f",
+          "run_log_sha256": "d4d03d91647b53622bf128ab51135e7a7f050d8fb7d512bba4401f5afabc9dbd"
+        }
+      }
+    },
+    {
+      "id": "M14",
+      "clause": "§9.4",
+      "changed_rtl_file_sha256": {
+        "src/project.v": "cec30f273faa03580da7ad918821faf993d5f9e977fea88927b2227770fb4e57"
+      },
+      "frozen_simulation": "killed",
+      "augmented_simulation": "killed",
+      "first_failing_case": "test_aligned_runs_and_tagged_words",
+      "first_mismatch": "E150 uo_out: expected 16, got 00110000",
+      "execution": {
+        "directed": {
+          "counts": {
+            "pass": 0,
+            "fail": 1,
+            "skip": 1,
+            "error": 0
+          },
+          "tests": {
+            "dual_run_and_wait_edges": "fail",
+            "dual_uart_spi_modes": "skip"
+          },
+          "junit_sha256": "abf36c0f80c9db1af8afd939b8efae66d2d4a423b459b85865bdca12e397d5ec",
+          "run_log_sha256": "95cedc45d213b7fbffc7983ce52976f8dced2f967b4a88dc684202b490b1ac23"
+        }
+      }
+    },
+    {
+      "id": "M15",
+      "clause": "§9.2",
+      "changed_rtl_file_sha256": {
+        "src/pe_core.v": "4fe3ed3bf6a317da77f96baefa56ca5332e6d87e196fdf7f1971c212f837d55b"
+      },
+      "frozen_simulation": "killed",
+      "augmented_simulation": "killed",
+      "first_failing_case": "test_aligned_runs_and_tagged_words",
+      "first_mismatch": "E276 uio_out: expected 1, got 00000000",
+      "execution": {
+        "directed": {
+          "counts": {
+            "pass": 0,
+            "fail": 1,
+            "skip": 1,
+            "error": 0
+          },
+          "tests": {
+            "dual_run_and_wait_edges": "fail",
+            "dual_uart_spi_modes": "skip"
+          },
+          "junit_sha256": "d8eb4e32516867ae6b453773777199c2d0e6254a3539506b00fbfd22dc098d07",
+          "run_log_sha256": "d94052c9c2f065c2db643a624a3114dd0f3284a8fdc09580a22e4e1e5aaf694e"
+        }
+      }
+    }
+  ]
+}
