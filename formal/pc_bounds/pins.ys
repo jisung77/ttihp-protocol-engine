@@ -1,0 +1,8 @@
+# Run in formal/. Use the real registered program SRAM, including all writes.
+read_verilog -sv -formal -DPE_SIM_SRAM ../src/pe_fifo.v ../src/pe_core.v ../src/pe_host.v ../src/pe_sram.v ../src/project.v
+expose tt_um_jisung_protocol_engine/w:pc tt_um_jisung_protocol_engine/w:retire tt_um_jisung_protocol_engine/w:tx_count tt_um_jisung_protocol_engine/w:rx_count
+read_verilog -sv -formal -DENGINE_LENGTH pe_engine_formal.sv
+expose pe_engine_formal/w:pc pe_engine_formal/w:uo_out pe_engine_formal/w:declared_length
+hierarchy -check -top pe_engine_formal
+proc
+opt_clean

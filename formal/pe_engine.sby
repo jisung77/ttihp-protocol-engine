@@ -1,11 +1,12 @@
 [tasks]
-safety default
-bounds
+safety default free_sram
+bounds length
+bounds_abstract length free_sram
 
 [options]
 mode prove
 aigsmt z3
-bounds: timeout 240
+length: timeout 240
 
 [engines]
 abc pdr
@@ -14,13 +15,17 @@ abc pdr
 read_verilog -sv -formal -DPE_SIM_SRAM pe_fifo.v pe_core.v pe_host.v pe_sram.v project.v
 expose tt_um_jisung_protocol_engine/w:pc tt_um_jisung_protocol_engine/w:retire tt_um_jisung_protocol_engine/w:tx_count tt_um_jisung_protocol_engine/w:rx_count
 safety: read_verilog -sv -formal pe_engine_formal.sv
-bounds: read_verilog -sv -formal -DENGINE_LENGTH pe_engine_formal.sv
+length: read_verilog -sv -formal -DENGINE_LENGTH pe_engine_formal.sv
 hierarchy -check -top pe_engine_formal
 proc
-# Treat instruction-memory output as a fresh arbitrary word on every step.
-# Only the SRAM instance is abstracted; loader/control and FIFO RTL stay exact.
+# The concrete task keeps the full SRAM and loader. The fast proof permits
+# arbitrary instruction words and independent write count and checksum values.
+# Every concrete execution is included by taking its actual values at each edge.
 select -assert-count 1 t:pe_sram
-safety: cutpoint t:pe_sram
+free_sram: cutpoint t:pe_sram
+bounds_abstract: select -assert-count 1 pe_host/w:words
+bounds_abstract: select -assert-count 1 pe_host/w:checksum
+bounds_abstract: cutpoint pe_host/w:words pe_host/w:checksum
 prep -top pe_engine_formal
 
 [files]

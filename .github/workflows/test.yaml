@@ -110,3 +110,65 @@ jobs:
           name: two-context-timing
           path: timing-run/
           if-no-files-found: error
+
+  pc_bounds:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Check out the SymbiYosys revision used with Yosys 0.33
+        uses: actions/checkout@v6
+        with:
+          repository: YosysHQ/sby
+          ref: 85dd50b92a3acf170954a06f20f49e2162ce5273
+          path: sby-tools
+          persist-credentials: false
+
+      - name: Install formal tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y yosys z3 iverilog
+          make -C sby-tools install PREFIX="$RUNNER_TEMP/pc-tools"
+          yosys -V
+          yosys-abc -c version
+
+      - name: Prove the pin-observed program counter bound
+        working-directory: formal
+        run: |
+          "$RUNNER_TEMP/pc-tools/bin/sby" -d pc-proof pe_engine.sby bounds_abstract
+          grep -q '^PASS ' pc-proof/status
+          git rev-parse HEAD > pc-proof/source-commit
+          sha256sum pe_engine.sby pe_engine_formal.sv ../src/{project,pe_host,pe_core,pe_sram,pe_fifo}.v > pc-proof/inputs.sha256
+          { yosys -V; yosys-abc -c version; z3 --version; git -C ../sby-tools rev-parse HEAD; } > pc-proof/tool-versions.txt
+
+      - name: Reach boundary PCs on the same formal model
+        working-directory: formal
+        run: python3 pc_bounds/reach.py pc-proof/model/design_prep.il pc-proof/witnesses
+
+      - name: Replay accepted BEGIN, reset and boundary PCs with concrete SRAM
+        working-directory: formal
+        run: |
+          yosys -Q -q -p 'script pc_bounds/pins.ys; write_verilog -noattr pc-proof/pins.v'
+          iverilog -g2012 -s pin_bounds_tb -o pc-proof/pins.vvp pc-proof/pins.v pc_bounds/pins_tb.sv
+          vvp pc-proof/pins.vvp | tee pc-proof/pins.log
+          if grep -Eq '^(ERROR|FATAL):' pc-proof/pins.log; then exit 1; fi
+          grep -q '^PASS .*checks=13 ' pc-proof/pins.log
+
+      - name: Upload proof log and verdict
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: single-pc-bounds
+          path: |
+            formal/pc-proof/witnesses/*/witness.vcd
+            formal/pc-proof/witnesses/*/receipt.json
+            formal/pc-proof/pins.log
+            formal/pc-proof/source-commit
+            formal/pc-proof/inputs.sha256
+            formal/pc-proof/tool-versions.txt
+            formal/pc-proof/config.sby
+            formal/pc-proof/status
+            formal/pc-proof/logfile.txt
+            formal/pc-proof/engine_0/logfile.txt
+            formal/pc-proof/model/design.ys
+          if-no-files-found: error

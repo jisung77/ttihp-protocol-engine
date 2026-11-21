@@ -39,7 +39,20 @@ sby pe_dual.sby slots ownership mode_cover
 - 정지 상태의 OE는 0이다. RUNNING이면 READY이며 FAULT가 0이다. FAULT이면 정지 상태이며 OE와 retire가 0이다.
 - RUN 시작 상태는 PC=0, OE=0이다. 연속 실행 중 은퇴하지 않은 에지에서는 PC와 OE를 유지한다. FAULT가 처음 올라오는 에지에서는 PC를 유지하고 은퇴하지 않는다.
 
-`bounds`는 호스트가 reset 해제 중 REQ=0을 유지하고 ACK 전까지 REQ와 니블을 유지하는 조건에서, 실제 동기 SRAM 모델(`PE_SIM_SRAM`)과 외부 ACK의 독립 프레임 해석을 사용한다. 기본 실행은 safety만 수행한다. 진단은 `sby pe_engine.sby bounds`로 따로 실행한다. 성공한 BEGIN의 길이를 기록하여 RUNNING인 모든 에지에 `pc < length <= 256`을 검사한다. [실행 확인] 이 작업은 240초 제한에서 TIMEOUT(rc=8)으로 종료했다. PC 안정성·fault 전이의 PASS와 구분하며, 임의 길이 이미지에 대한 PC 범위는 미증명이다. v0.2 단독 모드에서도 240초에 같은 판정을 얻었다. 별도 실제 로더·행동 SRAM 시뮬레이션으로 길이 1~256의 마지막 주소에서 순차 명령이 fault하는 256경우와 길이 1~255에서 정확히 length로 분기할 때 fault하는 255경우를 확인했다.
+[실행 확인] `bounds_abstract`는 ABC PDR로 단독 모드의 모든 RUNNING 표본에서 **PC < 호스트 핀으로 선언한 길이 ≤ 256**을 무한 깊이로 증명했다. 길이는 외부 ACK와 니블로 성공한 BEGIN을 해석해 기록한다. 처음 세 에지의 단독 strap과 §6의 REQ·데이터 유지 규칙을 포함한 기존 환경 가정 다섯 개를 사용한다. 기존 단언 11개 전부를 검사한다.
+
+[추론] 이 증명은 SRAM 읽기 데이터(16비트), 호스트가 적재한 워드 수(9비트), 누적 체크섬(16비트)을 각 클록에 자유롭게 선택하게 한다. 매번 실제 회로의 세 값을 선택하면 실제 실행도 재현되므로 증명된 범위는 실제 회로에도 적용된다. 이 때문에 짧은 적재를 END가 허용하는 실행도 탐색한다. END가 올바른 개수·체크섬만 수락하는지는 별도 속성이다. 이 작업의 수치 상한은 256이며, 길이 256 자체에서 8비트 PC의 래핑 동작은 아래 opcode 속성이 다룬다.
+
+```sh
+sby -d pc-proof pe_engine.sby bounds_abstract
+python3 pc_bounds/reach.py pc-proof/model/design_prep.il pc-witness
+```
+
+[실행 확인] 위 SAT 도달 검사는 같은 준비 모델에 합법적인 호스트 핀 벡터를 주고 경계 상태의 존재를 확인한다. 길이 1·PC 0과 거절 코드 3 뒤 재적재한 길이 256·PC 255에서 각각 RUNNING=1인 VCD를 얻었다. 세 자유 신호는 고정하지 않는다. 실제 메모리 256워드를 모두 쓰는 사례는 아래 SRAM 핀 시험에서 확인한다.
+
+[실행 확인] 원래 `bounds` 작업은 행동 SRAM과 적재 카운트·체크섬을 모두 유지한다. 이 경로와 SRAM 출력만 자유롭게 둔 이전 실험은 각각 240초에서 TIMEOUT이었다. 기본 `sby pe_engine.sby`는 기존 safety만 실행한다.
+
+[실행 확인] 별도의 행동 SRAM 핀 시험은 적재 중 reset·선택 해제, 거부된 BEGIN, 정상 재적재, 길이 1의 PC 0과 길이 256의 PC 255를 포함한 13개 사례를 확인했다. 주소 검사 `next_pc >= length`에서 등호를 제거한 검증용 사본은 길이 1에 DATA 0을 적재하자 RUN 수락 뒤 두 번째 에지에 PC=1, RUNNING=1이 돼 원래 단언을 위반했다. 정상 회로는 그 에지에 PC=0, FAULT=1이었다. [핀 벡터](pc_bounds/pins_tb.sv) · [공식 회귀 실행 명령](../.github/workflows/test.yaml)
 
 `pe_opcode.sby`는 프로그램 SRAM의 등록 출력 `instruction[15:0]`(pe_sram.dout → pe_core.instruction)을 관찰한다. SRAM 저장 배열의 원시 읽기 값만 임의화하고 실제 동기 읽기·보존 회로를 유지한다. 최초 한 에지에 reset 또는 deselect를 가정하며 E1~E3에는 위의 단독 strap 조건을 사용한다. 다른 입력은 자유롭다. S 직전 인출 워드의 opcode를 저장하여 stall 후 R까지 추적한다. 명령 해석이 정확하다는 가정은 없다.
 
@@ -65,4 +78,4 @@ vvp /tmp/dual-witness.vvp
 
 - `fifo_cover/engine_0/trace5.vcd`에서 가득 찬 큐의 동시 요청 후 count가 3이 되는지 확인한다.
 - `fifo_cover/engine_0/trace6.vcd`에서 8번 이상의 쓰기와 읽기가 수락된 뒤 다시 비는지 확인한다.
-- 엔진 `opcode/PASS`와 `engine_exact_bounds/status`를 대조해 opcode별 상태 전이와 이미지 길이 검사의 판정을 확인한다.
+- `bounds_abstract` 로그의 귀납 불변식 검증 성공과 핀 로그의 길이 256·PC 255 표본을 확인한다.
