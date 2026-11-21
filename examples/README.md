@@ -49,6 +49,10 @@ TT_FULL_WIRE_SWEEP=1 python -m pytest -q model/test_program_pins.py
 
 [미실행] 엔진 RTL과 실제 칩의 프로토콜 속도·SRAM 타이밍은 별도의 검증 대상이다.
 
+### PS/2 키보드 수신
+
+[실행 확인] [PS/2 수신 프로그램](ps2_rx.asm)은 v0.1 검증 계획에서 UART·SPI 설계에 사용하지 않고 남겨 둔 사례다. 키보드 클록은 핀 0, 데이터는 핀 1이다. 프로그램은 두 입력을 구동하지 않고 시작 비트 0, LSB 우선 데이터 8비트, 홀수 패리티, 정지 비트 1을 처리한다. 두 실행 경로가 지금까지 본 1의 개수가 짝수인지 홀수인지 기억한다. 정상 바이트는 RX FIFO에 넣고, 잘못된 프레임은 정지 비트까지 소비한다. [실험과 재현 방법](../experiments/ps2/README.md) · [Microchip TB056](https://ww1.microchip.com/downloads/en/appnotes/91056c.pdf)
+
 ### 사람이 직접 확인할 지점
 
 - TX 예제의 SHOUT과 다음 SHOUT 사이에 DELAY 외의 세 명령이 어떤 비용을 더하는지 센다.

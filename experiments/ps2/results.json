@@ -1,0 +1,140 @@
+{
+  "input_commit": "d27a2592d16f156b7ae0f16a2ff42825e53a9cb5",
+  "netlist_sha256": "bedf9151ca2489f89f1255c5a9565ffc803368eba4049ede829c66a6291f5022",
+  "image_sha256": "92845eb17ad611b63df16a3deb59a0b63664f06194badb008056ed2049229938",
+  "pins": {
+    "rtl": {
+      "names": [
+        "ps2_50mhz_contiguous",
+        "ps2_frame_errors_and_recovery"
+      ],
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0,
+      "frames_presented": 275,
+      "good_received": 268,
+      "malformed_suppressed": 7,
+      "corpus_distinct": 256,
+      "corpus_rising_stress_frames": 128,
+      "empty_retry_groups": 71,
+      "raw_xml_sha256": "f44eb6351f0909c386d7a2a517dccc56c74728168d0d033fbf2adcaa6a6d20e7"
+    },
+    "gls": {
+      "names": [
+        "ps2_50mhz_contiguous",
+        "ps2_frame_errors_and_recovery"
+      ],
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0,
+      "frames_presented": 19,
+      "good_received": 12,
+      "malformed_suppressed": 7,
+      "corpus_distinct": 0,
+      "corpus_rising_stress_frames": 0,
+      "empty_retry_groups": 7,
+      "raw_xml_sha256": "a75c6ce4b5db6176053572e800e73378f334d5970567a046ac55d27eeda53dbd"
+    },
+    "gls-full": {
+      "names": [
+        "ps2_50mhz_contiguous",
+        "ps2_frame_errors_and_recovery"
+      ],
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0,
+      "frames_presented": 275,
+      "good_received": 268,
+      "malformed_suppressed": 7,
+      "corpus_distinct": 256,
+      "corpus_rising_stress_frames": 128,
+      "empty_retry_groups": 71,
+      "raw_xml_sha256": "c24c4528f28e7ee2d3ed4ea512b1468a96286332332448ed7c952e475436f860"
+    },
+    "wire_control": {
+      "expected_failures": 1,
+      "first_mismatch": "bad-parity-01: RX[1] expected 81, got 01"
+    }
+  },
+  "iss": {
+    "status": "PASS",
+    "scope": "software ISS from accepted RUN, transaction-level host RX",
+    "binary_bytes": 92,
+    "binary_sha256": "92845eb17ad611b63df16a3deb59a0b63664f06194badb008056ed2049229938",
+    "iss_sha256": "13c18cccf8b8224d59961a24b7ec52d2db98c80a3ca9a5421ad33449d6430310",
+    "spec_sha256": "f584cef36f6b34709aed7037553f4688b1084ef7a12b0f011fd61edec998eb5c",
+    "valid_bytes_ordered": 1024,
+    "malformed_rejected": 36,
+    "engine_edges": 10545998,
+    "runs": [
+      {
+        "engine_hz": 2000000,
+        "wire_hz": 10000,
+        "engine_edges": 583816,
+        "valid_bytes_ordered": 256,
+        "malformed_rejected": 9,
+        "bad_start": 3,
+        "bad_parity": 3,
+        "bad_stop": 3,
+        "pushes": 256,
+        "fault_edges": 0,
+        "oe_nonzero_edges": 0,
+        "pending_rx": 0,
+        "base_pins_sha256": "e045d2d31fab1819ee18d9c039ecf4c14e2395ea085332be4d81eac7cc3a68fe",
+        "ticks_per_sample": 1,
+        "received_bytes_sha256": "7dd5ce61239d6a3eee5829b8977c59263ef1d7cae04f8237a32b3efea4929daa"
+      },
+      {
+        "engine_hz": 2000000,
+        "wire_hz": 12500,
+        "engine_edges": 467216,
+        "valid_bytes_ordered": 256,
+        "malformed_rejected": 9,
+        "bad_start": 3,
+        "bad_parity": 3,
+        "bad_stop": 3,
+        "pushes": 256,
+        "fault_edges": 0,
+        "oe_nonzero_edges": 0,
+        "pending_rx": 0,
+        "base_pins_sha256": "6fea57618b55be02cec77b605279005f3977e199937aeeb2ae873cd3a780592a",
+        "ticks_per_sample": 1,
+        "received_bytes_sha256": "7dd5ce61239d6a3eee5829b8977c59263ef1d7cae04f8237a32b3efea4929daa"
+      },
+      {
+        "engine_hz": 2000000,
+        "wire_hz": 16000,
+        "engine_edges": 365191,
+        "valid_bytes_ordered": 256,
+        "malformed_rejected": 9,
+        "bad_start": 3,
+        "bad_parity": 3,
+        "bad_stop": 3,
+        "pushes": 256,
+        "fault_edges": 0,
+        "oe_nonzero_edges": 0,
+        "pending_rx": 0,
+        "base_pins_sha256": "4221dfba446298ba3cab718a979af5d3901886f712acbd39fef8e4ad25fd4a1d",
+        "ticks_per_sample": 1,
+        "received_bytes_sha256": "7dd5ce61239d6a3eee5829b8977c59263ef1d7cae04f8237a32b3efea4929daa"
+      },
+      {
+        "engine_hz": 50000000,
+        "wire_hz": 16000,
+        "engine_edges": 9129775,
+        "valid_bytes_ordered": 256,
+        "malformed_rejected": 9,
+        "bad_start": 3,
+        "bad_parity": 3,
+        "bad_stop": 3,
+        "pushes": 256,
+        "fault_edges": 0,
+        "oe_nonzero_edges": 0,
+        "pending_rx": 0,
+        "base_pins_sha256": "4221dfba446298ba3cab718a979af5d3901886f712acbd39fef8e4ad25fd4a1d",
+        "ticks_per_sample": 25,
+        "received_bytes_sha256": "7dd5ce61239d6a3eee5829b8977c59263ef1d7cae04f8237a32b3efea4929daa"
+      }
+    ]
+  }
+}

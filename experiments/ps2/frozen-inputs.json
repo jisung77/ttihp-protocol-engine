@@ -1,0 +1,18 @@
+{
+  "utc": "2026-11-21T04:52:10.550620+00:00",
+  "commit": "d27a2592d16f156b7ae0f16a2ff42825e53a9cb5",
+  "src_tree": "f77dcf4fe7cfcece2d6fcb564b6d7f9be4818e47",
+  "scope": "Pre-experiment freeze: v0.1 ISA, complete RTL, assembler, ISS. Device-to-host PS/2 test. No project-wide January RTL freeze.",
+  "files": {
+    "model/assembler.py": "11027a4af382eb6f46051eaa3bdb622c1e04ddcf55447b2fd55b93f77b9f7843",
+    "model/iss.py": "13c18cccf8b8224d59961a24b7ec52d2db98c80a3ca9a5421ad33449d6430310",
+    "spec/spec.md": "f584cef36f6b34709aed7037553f4688b1084ef7a12b0f011fd61edec998eb5c",
+    "src/config.json": "9e0f31cb571ca59196a36ee67fc2b68e2b8cc1b8145c0de0d893850bc23dfb30",
+    "src/pdn_cfg.tcl": "73b46e84d805e0fc4228aeded7c6c6065b5a90b1cc50297d3a9326710b12d094",
+    "src/pe_core.v": "a9c1d83bbdb62a9eafce36e251a5bd160b48ce231465e67659934a007d45f505",
+    "src/pe_fifo.v": "f419262a7b04cc822fca4f05ae3ef87b64c907a62c8f5750c684a3f5e65a1243",
+    "src/pe_host.v": "4df232290995fdedf88c63aceaf2c40864fed4c256821c9ba0f7a7f718208dd4",
+    "src/pe_sram.v": "f4048198d7b580f0eed52792945f1bbee450b8e9ba4314b335d32afa5a60f8fe",
+    "src/project.v": "4d99868ca609ec7b2964574f208f0ca9a9e881c77d592d176418e65b511cbc0a"
+  }
+}
