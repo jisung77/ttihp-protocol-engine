@@ -71,7 +71,7 @@ jobs:
         run: python -m pip install -r test/requirements.txt
 
       - name: Test the model, assembler and host driver
-        run: python -m pytest -q model --junitxml=python-results.xml
+        run: python -m pytest -q model experiments/i2c_write --junitxml=python-results.xml
 
       - name: Upload Python test results
         if: success() || failure()
@@ -89,6 +89,16 @@ jobs:
         with:
           name: dual-iss-pins
           path: v02-iss/concurrent-pins.json
+          if-no-files-found: error
+
+      - name: Check the I2C write example on the ISS
+        run: python -m experiments.i2c_write.run i2c-results.json
+
+      - name: Upload I2C pin measurements
+        uses: actions/upload-artifact@v7
+        with:
+          name: i2c-write-pins
+          path: i2c-results.json
           if-no-files-found: error
 
       - name: Check two-context timing proposal

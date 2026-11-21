@@ -6,7 +6,7 @@
 python -m model.assembler examples/spi_mode0.asm spi_mode0.bin
 ```
 
-[실행 확인] 모든 예제는 입력 FIFO나 외부 신호를 기다리며 반복할 수 있다. 아래 워드 수는 CLI가 생성한 바이트 수를 2로 나눈 값이다.
+[실행 확인] 아래 UART·SPI 예제는 입력 FIFO나 외부 신호를 기다리며 반복할 수 있다. 아래 워드 수는 CLI가 생성한 바이트 수를 2로 나눈 값이다.
 
 | 프로그램 | 워드 수 | 핀과 데이터 경로 |
 |---|---:|---|
@@ -52,6 +52,10 @@ TT_FULL_WIRE_SWEEP=1 python -m pytest -q model/test_program_pins.py
 ### PS/2 키보드 수신
 
 [실행 확인] [PS/2 수신 프로그램](ps2_rx.asm)은 v0.1 검증 계획에서 UART·SPI 설계에 사용하지 않고 남겨 둔 사례다. 키보드 클록은 핀 0, 데이터는 핀 1이다. 프로그램은 두 입력을 구동하지 않고 시작 비트 0, LSB 우선 데이터 8비트, 홀수 패리티, 정지 비트 1을 처리한다. 두 실행 경로가 지금까지 본 1의 개수가 짝수인지 홀수인지 기억한다. 정상 바이트는 RX FIFO에 넣고, 잘못된 프레임은 정지 비트까지 소비한다. [실험과 재현 방법](../experiments/ps2/README.md) · [Microchip TB056](https://ww1.microchip.com/downloads/en/appnotes/91056c.pdf)
+
+### I²C 한 바이트 쓰기
+
+[실행 확인] 주소와 데이터로 189워드 이미지를 생성해 단독 모드에 적재한다. SDA와 SCL은 각각 uio[0]과 uio[1]이며, 풀업을 사용하는 오픈드레인으로 구동한다. [명령과 파형 예제](../experiments/i2c_write/README.md)
 
 ### 사람이 직접 확인할 지점
 

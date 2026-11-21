@@ -18,6 +18,8 @@ python -m model.assembler examples/uart_tx.asm uart_tx.bin
 
 [실행 확인] 듀얼 모드에서 A의 UART TX와 B의 SPI 마스터가 동시에 동작한다. 네 가지 SPI 모드를 양쪽 시작 홀짝에서 시험하고, 매 전송의 MISO 바이트를 실제 호스트 RX 명령으로 읽어 검사했다. [듀얼 검증 결과](docs/two_context_results.md) · [동시 실행 검사](experiments/two_context/verify_v02.py) · [클록별 RTL 대조](test/test_dual.py) · [슬롯과 핀 소유권 formal](formal/pe_dual.sby)
 
+[실행 확인] 단독 모드의 I²C 예제는 일반 7비트 주소로 1바이트를 쓰고 ACK 또는 NACK를 호스트 RX FIFO에 돌려준다. [이미지 생성과 핀 검증](experiments/i2c_write/README.md)
+
 ## AI 활용
 
 [실행 확인] Jisung IC가 설계 범위와 WAIT의 첫 상승 에지 규칙을 정하고 v0.1 설계 판단을 위임했다. Claude Code의 계획·비판 검토 서브에이전트는 일반 검증 과제를 나눴다. Codex의 분리된 역할은 명세, RTL, ISS·검증 벡터와 실행을 담당했다. v0.2에서는 Jisung IC의 정본 편집 위임에 따라 Claude Code가 RTL 및 ISS 업무를 각각 분리된 서브에이전트에 배정했다. Codex는 독립 핀 검사와 모델·RTL·게이트 대조를 수행했다. IHP SRAM 시뮬레이션 모델과 전원망 보조 코드의 원출처는 아래에 있다. [IHP 모델 출처](test/sram_model/README.md) · [공식 SRAM 통합 예제](https://github.com/TinyTapeout/ttihp-cmos5l-sram-example/tree/15ac9bc8560384d1ca7b24e5df0b7b82357d98db)
