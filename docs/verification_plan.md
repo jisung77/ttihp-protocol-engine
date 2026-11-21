@@ -2,7 +2,7 @@
 
 [추론] 단일 컨텍스트 MVP의 판정 기준은 [엔진 명세 v0.1](../spec/spec.md)이다. 아래 각 행의 절 번호는 자극·기대값·속성의 출처다. 구현이 기대값과 다를 때에는 명세와 첫 불일치 사이클을 먼저 확인한다.
 
-[미실행] 엔진 전체 RTL·ISS 차등 회귀, formal, UART·SPI 독립 BFM, SRAM 포함 하드닝과 GLS의 합격 증거는 아직 없다. 개별 예제와 환경 점검용 덧셈기 결과는 각각의 실행 범위로 기록한다.
+[실행 확인] 단일 엔진의 RTL·ISS 차등 회귀, FIFO formal, UART·SPI 독립 검사, SRAM 포함 하드닝과 GLS를 실행했다. 추가 PC 범위 증명 두 건은 제한 시간 안에 판정되지 않았다. [단일 엔진 검증 보고서](verification_report.md)
 
 ## 판정 시점과 독립성
 
@@ -39,7 +39,7 @@
 
 [추론] 실행마다 입력 커밋, 도구 SHA, 실제 PDK와 설정, 명령·seed·종료 코드·기대 테스트 이름을 남긴다. XML의 이름별 1회 실행 및 실패·오류·스킵 0건을 검사하고 RTL과 GLS의 XML·로그·파형을 별도 보관한다. 하드닝 경고, resolved.json, pdk.json, GDS, 최종 넷리스트·metrics를 저장한다. CI run 링크, 실제 검사한 GDS의 SHA-256와 항목별 precheck 및 GLS 결과를 연결한다. [§8](../spec/spec.md#s8)
 
-[미실행] 14일차의 세 게이트는 각각 판정한다. [§8](../spec/spec.md#s8)
+[실행 확인] 단일 엔진의 14일차 세 조건은 모두 통과했다. 아래는 평가에 사용한 기준이다. [검증 원본](https://github.com/jisung77/ttihp-protocol-engine/releases/tag/mvp-physical-38fffad) · [다음 단계인 두 컨텍스트의 시간표 실험](two_context_timing.md) [§8](../spec/spec.md#s8)
 
 1. 실제 IHP SRAM이 포함된 GDS를 배치 인스턴스와 뷰로 확인하고, 그 산출물이 TT precheck의 필수 항목을 통과해야 한다.
 2. UART TX가 독립 BFM에서 프레임과 비트 타이밍을 모두 만족해야 한다.

@@ -31,6 +31,17 @@ jobs:
           # make will return success even if the tests fail, so check results.xml for failed tests
           python -m cocotb_tools.check_results results.xml
 
+      - name: Probe alternating fetches on the IHP SRAM model
+        run: sh experiments/two_context/check_sram.sh sram-timing
+
+      - name: Upload alternating SRAM fetch results
+        uses: actions/upload-artifact@v7
+        if: success() || failure()
+        with:
+          name: alternating-sram-fetch
+          path: sram-timing/*.log
+          if-no-files-found: error
+
       - name: Test Summary
         uses: test-summary/action@v2.4
         with:
@@ -68,4 +79,14 @@ jobs:
         with:
           name: python-test-results
           path: python-results.xml
+          if-no-files-found: error
+
+      - name: Check two-context timing proposal
+        run: python experiments/two_context/run.py . timing-run
+
+      - name: Upload timing traces and program images
+        uses: actions/upload-artifact@v7
+        with:
+          name: two-context-timing
+          path: timing-run/
           if-no-files-found: error
