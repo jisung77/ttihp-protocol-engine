@@ -51,6 +51,8 @@ python experiments/two_context/verify_v02.py dual-demo --negative
 
 [실행 확인] 두 컨텍스트의 PC는 각자가 호스트에서 수락한 프로그램 길이 안에서 실행된다. 호스트 선택이 바뀐 동안의 검사는 양쪽 RUNNING을 함께 관측한 귀납 증명에 포함되며, 최대 길이 128의 양방향 적재와 서로 다른 물리 인출 주소는 행동 SRAM에서 재현했다. [증명과 재현 명령](../formal/README.md#두-컨텍스트의-pc와-sram-주소)
 
+[실행 확인] 전원 스트라이프 확장 전 GeneratePDN의 연결 경고와 확장 후 배선 검사를 구분했다. 배선 후 두 전원망은 모두 연결됐다는 OpenROAD 기록이 있다. Magic 추출에서 Metal4 장애물 겹침 28건을 보고했고, SRAM을 추상화한 상위 Netgen LVS와 공식 KLayout DRC는 통과했다. [검사 범위와 배선 결과](competition.md)
+
 ## 사람이 직접 확인할 지점
 
 1. `dual-demo/concurrent-pins.json`에서 SPI 모드마다 UART 전이와 CS 활성 구간을 겹쳐 본다.

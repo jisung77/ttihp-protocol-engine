@@ -1,5 +1,7 @@
 # 단일 통신 엔진 검증 보고서
 
+[실행 확인] 아래에는 단독 MVP의 당시 결과를 보존했다. 이후 듀얼 모드까지 포함한 공식 RTL·GLS·precheck 결과와 PDK는 [심사용 검증 요약](competition.md)에 있다.
+
 [실행 확인] 검증 대상은 `tt_um_jisung_protocol_engine` 및 v0.1 명세다. 같은 엔진에 어셈블한 프로그램을 호스트 REQ/ACK로 적재해 UART·SPI 기능을 바꿨다. RTL은 명세를 보고 작성하고, 별도 VERIFY 작업자가 독립 ISS와 기대 벡터를 작성했다. Claude Code는 일반 시험 계획과 경계 검토를 분담했고, Codex는 원본 명세로 수용 기준을 검토하고 로컬 도구에서 실행했다. [명세](../spec/spec.md) · [검증 계획](verification_plan.md) · [결과 XML·파형·증명 해시](verification_results.json)
 
 | 검증 대상 | [실행 확인] 판정과 범위 |

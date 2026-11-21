@@ -2,7 +2,7 @@
 
 [추론] 단일 컨텍스트 MVP의 판정 기준은 [엔진 명세 v0.1](../spec/spec.md)이다. 아래 각 행의 절 번호는 자극·기대값·속성의 출처다. 구현이 기대값과 다를 때에는 명세와 첫 불일치 사이클을 먼저 확인한다.
 
-[실행 확인] 단일 엔진의 RTL·ISS 차등 회귀, FIFO formal, UART·SPI 독립 검사, SRAM 포함 하드닝과 GLS를 실행했다. 추가 PC 범위 증명 두 건은 제한 시간 안에 판정되지 않았다. [단일 엔진 검증 보고서](verification_report.md)
+[실행 확인] 단일 엔진의 RTL·ISS 차등 회귀, FIFO formal, UART·SPI 독립 검사, SRAM 포함 하드닝과 GLS를 실행했다. 초기 PC 범위 작업은 시간 제한에 도달했다. 후속 핀 관측기와 SRAM 읽기·적재 카운터·체크섬 추상화로 단독 및 듀얼 모드의 실행 중 PC 범위를 무한 깊이에서 증명했다. [후속 증명과 가정](../formal/README.md) [단일 엔진 검증 보고서](verification_report.md)
 
 ## 판정 시점과 독립성
 

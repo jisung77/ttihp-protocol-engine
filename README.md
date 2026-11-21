@@ -2,6 +2,8 @@
 
 [실행 확인] 16비트 명령을 적재해 여덟 양방향 핀의 데이터·방향·입력 샘플 시점을 제어하는 엔진이다. 단독 모드는 핀 8개와 256워드를 쓰고, 듀얼 모드는 두 프로그램이 각각 128워드와 출력 핀 4개를 맡아 실행부를 공유한다. IHP CMOS5L용 Tiny Tapeout 인터페이스와 256×16 단일 포트 SRAM을 사용한다. UART TX/RX 및 네 가지 SPI 마스터 모드는 같은 RTL에서 서로 다른 프로그램으로 실행된다. [핀맵과 첫 적재 예제](docs/info.md) · [명령어와 클록 규칙](spec/spec.md)
 
+[English architecture, verification and reproduction guide](docs/competition.md)
+
 ## 첫 프로그램
 
 호스트에서 다음 명령을 실행하면 UART 송신 예제가 로더에 넣을 수 있는 리틀엔디언 바이너리가 된다. 준비된 프로그램은 FIFO에서 바이트를 받아 핀 0에 8N1 프레임을 출력한다. [어셈블리와 예제 설명](examples/README.md) · [RP2350 적재 방법](host/README.md)

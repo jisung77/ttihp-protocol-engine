@@ -21,7 +21,7 @@ python -m model.assembler examples/ps2_rx.asm /tmp/ps2_rx.bin
 sha256sum /tmp/ps2_rx.bin
 python experiments/ps2/check_iss.py /tmp/ps2_rx.bin
 (cd test && PS2_FULL=1 make COCOTB_TEST_MODULES=test_heldout_ps2 && python -m cocotb_tools.check_results results.xml)
-git diff d27a259 -- src spec/spec.md model/assembler.py model/iss.py
+git diff --exit-code d27a2592d16f156b7ae0f16a2ff42825e53a9cb5 8644881957b3a93adc175bda7f87e4e34409097c -- src spec/spec.md model/assembler.py model/iss.py
 ```
 
 [미실행] 실물 RP2350과 PS/2 키보드를 연결한 측정.
