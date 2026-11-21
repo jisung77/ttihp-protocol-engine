@@ -172,3 +172,51 @@ jobs:
             formal/pc-proof/engine_0/logfile.txt
             formal/pc-proof/model/design.ys
           if-no-files-found: error
+
+      - name: Prove both dual-mode PC bounds and exact SRAM fetch addresses
+        working-directory: formal
+        run: |
+          mkdir -p dual-proof
+          for bank in bank_a bank_b; do
+            "$RUNNER_TEMP/pc-tools/bin/sby" -d "dual-proof/$bank" pe_dual_bounds.sby "$bank"
+            grep -q '^PASS ' "dual-proof/$bank/status"
+          done
+          yosys -Q -q -l dual-proof/review.log dual_pc_bounds/review.ys
+          grep -q 'Induction step proven: SUCCESS!' dual-proof/review.log
+          git rev-parse HEAD > dual-proof/source-commit
+          sha256sum pe_dual_bounds.{sv,sby} dual_pc_bounds/{review.sv,review.ys,pins_tb.sv,reach.py} ../src/{project,pe_host,pe_core,pe_sram,pe_fifo}.v > dual-proof/inputs.sha256
+
+      - name: Witness both PCs at their bounds on the two proven models
+        working-directory: formal
+        run: |
+          python3 dual_pc_bounds/reach.py dual-proof/bank_a/model/design_prep.il dual-proof/pair_1_128 0 1 128
+          python3 dual_pc_bounds/reach.py dual-proof/bank_b/model/design_prep.il dual-proof/pair_128_1 1 128 1
+
+      - name: Reach opposite SRAM bank limits through the real host interface
+        working-directory: formal
+        run: |
+          iverilog -g2012 -DPE_SIM_SRAM -s dual_pc_bounds_pins -o dual-proof/pins.vvp dual_pc_bounds/pins_tb.sv ../src/*.v
+          cd dual-proof
+          vvp pins.vvp +trace | tee pins.log
+          if grep -Eq '^(ERROR|FATAL):' pins.log; then exit 1; fi
+          grep -q '^PASS dual PC physical SRAM pin witnesses ' pins.log
+
+      - name: Upload dual-mode PC proof and pin trace
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: dual-pc-bounds
+          path: |
+            formal/dual-proof/bank_*/status
+            formal/dual-proof/bank_*/config.sby
+            formal/dual-proof/bank_*/logfile.txt
+            formal/dual-proof/bank_*/engine_0/logfile.txt
+            formal/dual-proof/bank_*/model/design.ys
+            formal/dual-proof/review.log
+            formal/dual-proof/pins.log
+            formal/dual-proof/pair_*/witness.vcd
+            formal/dual-proof/pair_*/receipt.json
+            formal/dual-proof/pins.vcd
+            formal/dual-proof/source-commit
+            formal/dual-proof/inputs.sha256
+          if-no-files-found: error

@@ -74,8 +74,27 @@ iverilog -g2012 -DPE_SIM_SRAM -DPE_DUAL_PIN_WITNESS -s pe_dual_pin_witness -o /t
 vvp /tmp/dual-witness.vvp
 ```
 
+### 두 컨텍스트의 PC와 SRAM 주소
+
+[실행 확인] §6과 §9의 호스트 ACK에서 첫 니블의 대상과 성공한 BEGIN의 16비트 길이를 복원한다. 뱅크별 ABC PDR 두 작업이 통과했다. 성공한 RUN부터 같은 대상의 STOP·BEGIN 또는 초기화까지 매 에지에서 PC는 그 대상의 선언 길이보다 작다. 유효 인출의 물리 주소는 인출 직전 PC에 A는 0, B는 128을 더한 값이다. 명령 인출 값, 적재 워드 수와 체크섬은 임의 값으로 열어 두며, BEGIN 길이와 PC는 실제 회로에서 결정된다. [핀 기반 속성](pe_dual_bounds.sv) · [SBY 설정](pe_dual_bounds.sby)
+
+[실행 확인] 독립 REVIEW 검사는 두 컨텍스트의 실제 RUNNING을 매 에지에 함께 관측한다. 호스트가 다른 쪽을 선택한 동안에도 실행 중인 PC는 핀에서 복원한 자기 길이보다 작았다. 마지막 성공 RUN의 길이를 따로 보관하면 정지 후 더 짧은 BEGIN을 받더라도 그 이전 RUN 길이에 대한 범위가 유지된다. 성공 RUN 표본의 PC는 0이고, 초기화 이후 두 PC의 최상위 비트는 0이다. [귀납 속성](dual_pc_bounds/review.sv) · [Yosys 재현 절차](dual_pc_bounds/review.ys)
+
+[실행 확인] 행동 SRAM에서는 길이 1과 128을 두 방향으로 적재했다. 두 프로그램이 함께 실행되는 동안 각자의 마지막 PC와 주소 0·127·128·255의 인출을 확인했다. B의 홀수 인출 주소를 한 워드 앞으로 옮긴 격리 사본은 PDR 51스텝과 핀 시험 4,929번째 에지에서 검출됐다. [핀 시험](dual_pc_bounds/pins_tb.sv)
+
+```sh
+# formal/ 에서 실행
+sby -d dual-a pe_dual_bounds.sby bank_a
+sby -d dual-b pe_dual_bounds.sby bank_b
+python3 dual_pc_bounds/reach.py dual-a/model/design_prep.il pair_1_128 0 1 128
+python3 dual_pc_bounds/reach.py dual-b/model/design_prep.il pair_128_1 1 128 1
+yosys -l review.log dual_pc_bounds/review.ys
+iverilog -g2012 -DPE_SIM_SRAM -s dual_pc_bounds_pins -o /tmp/dual-pc.vvp dual_pc_bounds/pins_tb.sv ../src/*.v
+vvp /tmp/dual-pc.vvp +trace
+```
+
 ## 사람이 직접 확인할 지점
 
-- `fifo_cover/engine_0/trace5.vcd`에서 가득 찬 큐의 동시 요청 후 count가 3이 되는지 확인한다.
+- `dual-pc-bounds` 산출물의 `pins.vcd`에서 B의 PC 127 인출 주소가 255이고 같은 구간의 A PC가 0인지 확인한다.
 - `fifo_cover/engine_0/trace6.vcd`에서 8번 이상의 쓰기와 읽기가 수락된 뒤 다시 비는지 확인한다.
 - `bounds_abstract` 로그의 귀납 불변식 검증 성공과 핀 로그의 길이 256·PC 255 표본을 확인한다.

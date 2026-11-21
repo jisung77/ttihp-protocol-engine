@@ -49,6 +49,8 @@ python experiments/two_context/verify_v02.py dual-demo --negative
 
 [실행 확인] 표준셀·클록 트리 77,901.2640 µm²와 SRAM 28,127.1040 µm²를 합한 면적은 106,028.3680 µm²다. 세 코너 모두 setup·hold TNS는 0이다. 보드에서 입출력 시간을 측정하는 작업은 남아 있다. 기능 GLS와 타이밍 분석은 각각 공식 TT의 게이트 모델과 배선 후 STA로 수행한다.
 
+[실행 확인] 두 컨텍스트의 PC는 각자가 호스트에서 수락한 프로그램 길이 안에서 실행된다. 호스트 선택이 바뀐 동안의 검사는 양쪽 RUNNING을 함께 관측한 귀납 증명에 포함되며, 최대 길이 128의 양방향 적재와 서로 다른 물리 인출 주소는 행동 SRAM에서 재현했다. [증명과 재현 명령](../formal/README.md#두-컨텍스트의-pc와-sram-주소)
+
 ## 사람이 직접 확인할 지점
 
 1. `dual-demo/concurrent-pins.json`에서 SPI 모드마다 UART 전이와 CS 활성 구간을 겹쳐 본다.

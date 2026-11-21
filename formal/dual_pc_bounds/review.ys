@@ -1,0 +1,26 @@
+# Run from formal/: yosys -l review.log dual_pc_bounds/review.ys
+read_verilog -sv -formal -DPE_SIM_SRAM ../src/pe_fifo.v ../src/pe_core.v ../src/pe_host.v ../src/pe_sram.v ../src/project.v
+hierarchy -check -top tt_um_jisung_protocol_engine
+proc
+select -assert-count 1 t:pe_sram
+cutpoint t:pe_sram
+select -assert-count 2 pe_host/w:words pe_host/w:checksum
+cutpoint pe_host/w:words pe_host/w:checksum
+flatten tt_um_jisung_protocol_engine
+cd tt_um_jisung_protocol_engine
+rename core.ph_hold hold
+rename core.ireg_r held
+rename host.loading loading
+rename host.phase phase
+rename host.high_nibble high_nibble
+rename host.low_byte low_byte
+rename host.saved_cmd saved_cmd
+expose w:pc_bus w:running w:image_len w:ready w:hold w:held w:loading w:target w:dual_mode w:phase w:high_nibble w:low_byte w:saved_cmd
+cd ..
+read_verilog -formal -sv dual_pc_bounds/review.sv
+prep -top pe_dual_bounds_review -flatten
+async2sync
+dffunmap
+memory_map
+opt -full
+sat -tempinduct -set-assumes -prove-asserts -verify -maxsteps 12 -timeout 100
