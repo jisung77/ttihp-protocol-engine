@@ -223,3 +223,56 @@ async def spi_master_full_duplex(dut, mode):
     report = Path(os.getenv("SPI_COVERAGE_FILE", "output/spi-coverage.yml"))
     report.parent.mkdir(exist_ok=True, parents=True)
     coverage_db.export_to_yaml(filename=str(report))
+
+
+class Spi24Target(ByteTarget):
+    """A generic cocotbext-spi target; exactly one complete full-duplex transaction."""
+    async def _transaction(self, frame_start, frame_end):
+        await frame_start
+        assert not self.received, "multiple 24-bit transactions"
+        word = self.replies[0]
+        if not self._config.cpha:
+            self._miso.value = (word >> 23) & 1
+            word = (word << 1) & 0xFFFFFF
+        self.received.append(await self._shift(24, word))
+        await frame_end
+
+
+@cocotb.test(timeout_time=1, timeout_unit="ms")
+@cocotb.parametrize(mode=range(4))
+async def spi_single_cs_24(dut, mode):
+    """Three bytes under one CS is a test policy extending the §8 byte example."""
+    import json
+    from hashlib import sha256
+    from spi24 import RX, TX, decode, negative_controls
+    from spi24_fixture import program
+
+    host = Host(dut)
+    await host.reset()
+    dut.serial_inputs.value = 1
+    image = program(mode)
+    await host.load(image)
+    for byte in TX:
+        await host.byte_tx(byte)
+    target = Spi24Target(dut, mode, [int.from_bytes(RX, "big")])
+    samples = []
+    recorder = cocotb.start_soon(record_spi(dut, samples))
+    await host.run()
+    await Timer(35, unit="us")
+    recorder.cancel()
+    assert target.received == [int.from_bytes(TX, "big")]
+    assert bytes([await host.byte_rx() for _ in range(3)]) == RX
+    # One more nonblocking RX command must report RETRY; status has no fault.
+    assert await host.command(7) == 1
+    assert not (await host.status()) & 2
+    check = decode(samples, mode)
+    negative = negative_controls(samples, mode, check)
+    out = os.getenv("SPI24_EVIDENCE")
+    if out:
+        folder = Path(out)
+        folder.mkdir(parents=True, exist_ok=True)
+        (folder / f"mode{mode}.bin").write_bytes(image)
+        (folder / f"mode{mode}-trace.json").write_text(json.dumps(samples, separators=(",", ":")))
+        report = dict(mode=mode, image_words=len(image) // 2, image_sha256=sha256(image).hexdigest(),
+                      checker=check, negative=negative, target_mosi=TX.hex(), host_rx=RX.hex())
+        (folder / f"mode{mode}.json").write_text(json.dumps(report, indent=2) + "\n")
