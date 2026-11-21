@@ -14,7 +14,7 @@ python -m model.assembler examples/uart_tx.asm uart_tx.bin
 
 [실행 확인] 검증용 Python ISS와 회로는 같은 명세로 독립 작성했다. cocotb는 로더로 프로그램을 적재하고 외부 핀과 클록별 실행 상태를 검사한다. 별도의 UART 수신기와 SPI 타깃이 실제 RTL 핀 전이를 해석한다. [검증 보고서](docs/verification_report.md) · [검증 실행법](test/README.md) · [검증 계획](docs/verification_plan.md)
 
-[추론] 클록 제약은 20 ns이며 예제 시각은 50 MHz 가정이다. 제작 공정의 속도와 14일차 면적 기준은 배선 후 결과로 판정한다. [Tiny Tapeout 공식 플로](https://www.tinytapeout.com/guides/local-hardening/)
+[실행 확인] 두 컨텍스트의 공식 배선에서 SRAM을 포함한 점유율은 8.7759%였다. 20 ns 제약과 세 코너에서 최저 setup/hold 여유는 +6.6262/+0.0923 ns였다. 잔여 전기적 경고는 클록 팬아웃 1건과 SRAM 부하 2건이다. [배선 수치와 범위](docs/two_context_results.md) [Tiny Tapeout 공식 플로](https://www.tinytapeout.com/guides/local-hardening/)
 
 [실행 확인] 듀얼 모드에서 A의 UART TX와 B의 SPI 마스터가 동시에 동작한다. 네 가지 SPI 모드를 양쪽 시작 홀짝에서 시험하고, 매 전송의 MISO 바이트를 실제 호스트 RX 명령으로 읽어 검사했다. [듀얼 검증 결과](docs/two_context_results.md) · [동시 실행 검사](experiments/two_context/verify_v02.py) · [클록별 RTL 대조](test/test_dual.py) · [슬롯과 핀 소유권 formal](formal/pe_dual.sby)
 

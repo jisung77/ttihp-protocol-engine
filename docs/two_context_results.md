@@ -36,6 +36,19 @@ python experiments/two_context/verify_v02.py dual-demo --negative
 
 [실행 확인] 기준 배선에서 클록 트리의 max-fanout 위반 39건과 SRAM 출력 A_DOUT[8,5,4]의 max-capacitance 위반 3건이 남았다. 전원망은 초기 검사 직후 SRAM용 스트라이프가 확장되며 후배선 검사에서 VPWR·VGND 연결을 확인했다. Netgen의 최상위 LEF/DEF 추출 LVS는 SRAM을 블랙박스로 취급했고 불일치가 0이었다. Magic의 SRAM 금속 장애물 관련 표시 28건은 최종 GDS의 공식 KLayout DRC와 별도 기록한다.
 
+## 채택한 배선 설정
+
+[실행 확인] 클록 말단 클러스터 크기를 8로 설정하고 global routing 후 설계 보정을 켰다. RTL, 20 ns 제약 및 셀의 허용 부하는 기준 배선과 같다. 클록 팬아웃 위반은 39건에서 1건으로, SRAM 출력 부하 위반은 각 코너에서 3건에서 2건으로 줄었다. CTS 루트 `clkbuf_0_clk_regs/X`의 팬아웃은 16으로 허용값 8을 넘는다. 남은 SRAM 출력은 A_DOUT[7]과 [10]이며 최악 부하는 0.071720 pF, 한계는 0.064000 pF다. 최대 부하 초과량은 0.019226 pF에서 0.007720 pF로 줄었다. [공식 비교 빌드](https://github.com/jisung77/ttihp-protocol-engine/actions/runs/44886598957)
+
+| 배선 후 측정값 | 기준 | 채택한 설정 |
+|---|---:|---:|
+| 코어 점유율 | 8.6399% | 8.7759% |
+| 최저 setup slack | +6.5605 ns | +6.6262 ns |
+| 최저 hold slack | +0.1014 ns | +0.0923 ns |
+| 최대 전이 시간 위반 | 0 | 0 |
+
+[실행 확인] 표준셀·클록 트리 77,901.2640 µm²와 SRAM 28,127.1040 µm²를 합한 면적은 106,028.3680 µm²다. 세 코너 모두 setup·hold TNS는 0이다. 보드에서 입출력 시간을 측정하는 작업은 남아 있다. 기능 GLS와 타이밍 분석은 각각 공식 TT의 게이트 모델과 배선 후 STA로 수행한다.
+
 ## 사람이 직접 확인할 지점
 
 1. `dual-demo/concurrent-pins.json`에서 SPI 모드마다 UART 전이와 CS 활성 구간을 겹쳐 본다.
