@@ -18,6 +18,8 @@
 python experiments/two_context/verify_v02.py dual-demo --negative
 ```
 
+[실행 확인] 별도 cocotb 시험은 ISS 없이 동작한다. SPI 타깃이 매 클록에 DUT가 직전에 내보낸 CS·SCK를 보고 다음 MISO를 정한다. 두 RUN 시작 위상과 네 모드를 합쳐 82,844개 클록에서 외부 바이트와 핀 타이밍을 확인했다. [실시간 핀 검사](../test/test_dual_live.py)
+
 ## 검증 범위
 
 - [실행 확인] 원래 29개 지향 시나리오와 고정 시드 네 쌍을 이용해 모드 선택, 호스트 잠금, WAIT의 시작·마감 에지, FIFO, STOP과 상대 명령의 동시 진행을 검사했다. RTL은 클록별 핀·내부 상태를 ISS와 대조하고 GLS는 최상위 핀만 관찰한다. [클록별 검사](../test/test_dual.py) · [시드 검사](../test/test_dual_random.py)
