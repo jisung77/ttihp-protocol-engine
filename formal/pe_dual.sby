@@ -1,0 +1,44 @@
+[tasks]
+slots default
+ownership default
+mode_cover
+
+[options]
+slots: mode prove
+ownership: mode prove
+mode_cover: mode cover
+mode_cover: depth 12
+timeout 240
+
+[engines]
+slots: abc pdr
+ownership: abc pdr
+mode_cover: smtbmc z3
+
+[script]
+read_verilog -sv -formal -DPE_SIM_SRAM pe_fifo.v pe_core.v pe_host.v pe_sram.v project.v
+expose tt_um_jisung_protocol_engine/w:dual_mode tt_um_jisung_protocol_engine/w:exec_start_a tt_um_jisung_protocol_engine/w:exec_start_b tt_um_jisung_protocol_engine/w:retire_a tt_um_jisung_protocol_engine/w:retire_b
+expose tt_um_jisung_protocol_engine/w:pc_a tt_um_jisung_protocol_engine/w:pc_b tt_um_jisung_protocol_engine/w:fetch_valid tt_um_jisung_protocol_engine/w:fetch_ctx tt_um_jisung_protocol_engine/w:sram_addr tt_um_jisung_protocol_engine/w:sram_we
+expose tt_um_jisung_protocol_engine/w:instr_valid tt_um_jisung_protocol_engine/w:instr_ctx tt_um_jisung_protocol_engine/w:instruction
+slots: read_verilog -sv -formal -DPE_DUAL_SLOTS pe_dual_formal.sv
+ownership: read_verilog -sv -formal -DPE_DUAL_OWNER pe_dual_formal.sv
+mode_cover: read_verilog -sv -formal -DPE_DUAL_BOOT_COVER pe_dual_formal.sv
+hierarchy -check -top pe_dual_formal
+proc
+# The register and enable on a synchronous read remain in the design. Replacing
+# just the raw SRAM cells permits arbitrary instruction data on enabled reads.
+memory_collect pe_sram
+select -assert-count 1 pe_sram/t:$mem_v2
+cutpoint pe_sram/t:$mem_v2
+prep -top pe_dual_formal
+# Remove the unobserved execution cone from the E3-only SMT cover.
+mode_cover: flatten
+mode_cover: opt_clean -purge
+
+[files]
+../src/pe_fifo.v
+../src/pe_core.v
+../src/pe_host.v
+../src/pe_sram.v
+../src/project.v
+pe_dual_formal.sv
