@@ -110,7 +110,6 @@ module pe_core (
     wire [7:0]  osr_e    = exec_b ? osr_r[15:8]    : osr_r[7:0];
     wire [7:0]  isr_e    = exec_b ? isr_r[15:8]    : isr_r[7:0];
     wire [7:0]  lc_e     = exec_b ? lc_r[15:8]     : lc_r[7:0];
-    wire [15:0] t_e      = exec_b ? t_r[31:16]     : t_r[15:0];
     wire [15:0] ireg_e   = exec_b ? ireg_r[31:16]  : ireg_r[15:0];
     wire [1:0]  wres_e   = exec_b ? wres_r[3:2]    : wres_r[1:0];
     wire [8:0]  len_e    = exec_b ? image_len[17:9] : image_len[8:0];
@@ -249,7 +248,6 @@ module pe_core (
     // ------------------------------------------------------------------
     reg [7:0]  alu_pc, alu_pdata, alu_poe, alu_adata, alu_aoe;
     reg [7:0]  alu_osr, alu_isr, alu_lc;
-    reg [15:0] alu_t;
     reg [1:0]  alu_wres;
     always @* begin
         alu_pc    = is_halt ? pc_e : next_pc[7:0];  // §6: HALT keeps PC
@@ -260,7 +258,6 @@ module pe_core (
         alu_osr   = osr_e;
         alu_isr   = isr_e;
         alu_lc    = lc_e;
-        alu_t     = t_e;
         alu_wres  = wres_e;
         case (op)
             DATA:  alu_pdata = imm;
@@ -269,8 +266,6 @@ module pe_core (
                 alu_adata = (adata_e & ~imm) | (pdata_e & imm);
                 alu_aoe   = (aoe_e   & ~imm) | (poe_e   & imm);
             end
-            TLO:   alu_t[7:0]  = imm;
-            THI:   alu_t[15:8] = imm;
             WAIT_PIN: alu_wres = wait_ok ? MATCH : TIMEOUT;
             SHIN:  alu_isr = arg[3] ? {pins[pin], isr_e[7:1]} : {isr_e[6:0], pins[pin]};
             SHOUT: begin
@@ -359,7 +354,8 @@ module pe_core (
                             osr_r[8*k +: 8]   <= alu_osr;
                             isr_r[8*k +: 8]   <= alu_isr;
                             lc_r[8*k +: 8]    <= alu_lc;
-                            t_r[16*k +: 16]   <= alu_t;
+                            if (op == TLO) t_r[16*k +: 8] <= imm;
+                            if (op == THI) t_r[16*k+8 +: 8] <= imm;
                             wres_r[2*k +: 2]  <= alu_wres;
                             if (is_halt) begin
                                 run_r[k]          <= 1'b0;
